@@ -10,6 +10,7 @@ import { HttpStatus } from "../../core/types/http-statuses";
 
 
 export const blogsRouter = Router({})
+
    blogsRouter.get("/", (req: Request, res: Response<BlogViewModel[]>) => {
     res.status(HttpStatus.Ok).send(db.blogs.map(getBlogViewModel));
   });
@@ -40,7 +41,7 @@ export const blogsRouter = Router({})
 
     });
 
-blogsRouter.put("/:id", (req: RequestWithParamsAndBody<{id:string},BlogInputDto>,  res: Response) => {
+    blogsRouter.put("/:id", (req: RequestWithParamsAndBody<{id:string},BlogInputDto>,  res: Response) => {
       const blog = db.blogs.find((b)=>b.id===req.params.id)
 
       if (!blog){
@@ -56,7 +57,7 @@ blogsRouter.put("/:id", (req: RequestWithParamsAndBody<{id:string},BlogInputDto>
       res.sendStatus(HttpStatus.NoContent)
   });
 
-blogsRouter.delete("/:id", (req: RequestWithParams<{id:string}>, res: Response)=>{
+    blogsRouter.delete("/:id", (req: RequestWithParams<{id:string}>, res: Response)=>{
   const idToDelete = req.params.id;
   const blogIndex = db.blogs.findIndex((blog)=>blog.id===idToDelete)
 
