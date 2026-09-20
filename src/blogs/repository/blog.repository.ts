@@ -24,7 +24,7 @@ export const blogsRepository = {
     return newBlog
     },
 
-    updateBlog (id : string, body: BlogInputDto){
+    updateBlog (id : string, body: BlogInputDto):boolean{
        const foundBlog = db.blogs.find((b)=>b.id===id)
         if (!foundBlog){
             return false
@@ -36,7 +36,7 @@ export const blogsRepository = {
         }
     },
 
-    deleteBlog(id:string){
+    deleteBlog(id:string):boolean{
         const idToDelete = id;
           const blogIndex = db.blogs.findIndex((blog)=>blog.id===idToDelete)
         

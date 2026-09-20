@@ -3,8 +3,6 @@ import { BlogViewModel } from "../dto/blog.view.model";
 import { BlogInputDto } from "../dto/blog.input.dto";
 import { RequestWithParams,RequestWithBody,RequestWithParamsAndBody } from "../../core/types/request_types";
 import { Request, Response } from 'express';
-import { Blog } from "../types/blogs";
-import { db } from "../../db/in_memory.db";
 import { getBlogViewModel } from "../blog.mapper";
 import { HttpStatus } from "../../core/types/http-statuses";
 import { blogsRepository } from "../repository/blog.repository";

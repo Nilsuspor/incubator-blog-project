@@ -7,16 +7,16 @@ import { Post } from "../types/posts";
 import { db } from "../../db/in_memory.db";
 import { getPostViewModel } from "../post.mapper";
 import { HttpStatus } from "../../core/types/http-statuses";
-
+import { postRepository } from "../repository/post.repository";
 
 export const postsRouter = Router({})
 
  postsRouter.get("/", (req: Request, res: Response<PostViewModel[]>) => {
-    res.status(HttpStatus.Ok).send(db.posts.map(getPostViewModel));
+    res.status(HttpStatus.Ok).send(postRepository.getAllPosts().map(getPostViewModel));
   });
 
   postsRouter.get("/:id", (req: RequestWithParams<{id:string}>, res: Response<PostViewModel>) => {
-      const foundPost = db.posts.find((p)=>p.id===req.params.id)
+      const foundPost = postRepository.getPostById(req.params.id)
       if (!foundPost){
         res.sendStatus(HttpStatus.NotFound)
         return
@@ -25,59 +25,32 @@ export const postsRouter = Router({})
   });
 
 postsRouter.post("/", (req: RequestWithBody<PostInputDto>, res: Response) => {
-    
-     const lastPost = db.posts[db.posts.length - 1];
-     const foundBlog = (db.blogs.find((b)=>b.id===req.body.blogId))
-     
-      if(!foundBlog){
+    const newPost = postRepository.createPost(req.body)
+      if(newPost===null){
         res.sendStatus(HttpStatus.BadRequest)
         return
-      }
-      const newPost: Post ={
-      id:lastPost ? (+lastPost.id + 1).toString() : "1",
-      title:req.body.title,
-      shortDescription:req.body.shortDescription,
-      content:req.body.content,
-      blogId:req.body.blogId,
-     
-      blogName:foundBlog.name
-    }
-    db.posts.push(newPost)
+      }else{
     res.status(HttpStatus.Created).send(getPostViewModel(newPost))
-
+      }
     });
 
      postsRouter.put("/:id", (req: RequestWithParamsAndBody<{id:string},PostInputDto>, res: Response) => {
-      const foundBlog = (db.blogs.find((b)=>b.id===req.body.blogId))
-      const post = db.posts.find((p)=>p.id===req.params.id)
-
-      if (!post){
-        res.sendStatus(HttpStatus.NotFound)
-        return
-      }
-      if(!foundBlog){
-        res.sendStatus(HttpStatus.BadRequest)
-        return
-      }
-
-      post.title = req.body.title
-      post.shortDescription = req.body.shortDescription
-      post.content =req.body.content
-      post.blogId =req.body.blogId
-      post.blogName = foundBlog.name
-
-      res.sendStatus(HttpStatus.NoContent)
+       if (!postRepository.updatePost(req.params.id, req.body)){
+              res.sendStatus(HttpStatus.NotFound)
+              return
+            }else{
+            res.sendStatus(HttpStatus.NoContent)}
   });
 
     postsRouter.delete("/:id", (req: RequestWithParams<{id:string}>, res: Response)=>{
-  const idToDelete = req.params.id;
-  const postIndex = db.posts.findIndex((blog)=>blog.id===idToDelete)
+    const idToDelete = req.params.id;
+    const postIndex = db.posts.findIndex((blog)=>blog.id===idToDelete)
 
-  if (postIndex<0){
-    res.sendStatus(HttpStatus.NotFound)
+    if (postRepository.deletePost(req.params.id)){
+        res.sendStatus(HttpStatus.NotFound)
     return
-  }
+    }
 
-  db.posts.splice(postIndex,1)
-  res.sendStatus(HttpStatus.NoContent)
+    db.posts.splice(postIndex,1)
+    res.sendStatus(HttpStatus.NoContent)
 })
