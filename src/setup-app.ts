@@ -18,7 +18,6 @@ export const setupApp = (app: Express) => {
   app.use('/posts', postsRouter)
   app.use ('/testing/all-data',testDelRouter)
 
-
   return app;
 
 };
