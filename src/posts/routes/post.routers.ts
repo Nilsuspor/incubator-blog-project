@@ -1,50 +1,19 @@
 import { Router } from "express";
-import { PostViewModel } from "../dto/post.view.model";
-import { PostInputDto } from "../dto/post.input.dto";
-import { RequestWithParams,RequestWithBody,RequestWithParamsAndBody } from "../../core/types/request_types";
-import { Request, Response } from 'express';
-import { getPostViewModel } from "../post.mapper";
-import { HttpStatus } from "../../core/types/http-statuses";
-import { postRepository } from "../repository/post.repository";
+import { POSTS_ROUTES } from "../constants/posts.path";
+import { getPostListHandler } from "./handlers/get-post-list.handler";
+import { getPostHandler as getPostHandler } from "./handlers/get-post.handler";
+import { createPostHandler } from "./handlers/create-post.handler";
+import { updatePostHandler } from "./handlers/update-post.handler";
+import { deletePostHandler } from "./handlers/delete-post.handler";
 
 export const postsRouter = Router({})
 
- postsRouter.get("/", (req: Request, res: Response<PostViewModel[]>) => {
-    res.status(HttpStatus.Ok).send(postRepository.getAllPosts().map(getPostViewModel));
-  });
+    postsRouter.get(POSTS_ROUTES.ROOT, getPostListHandler);
 
-  postsRouter.get("/:id", (req: RequestWithParams<{id:string}>, res: Response<PostViewModel>) => {
-      const foundPost = postRepository.getPostById(req.params.id)
-      if (!foundPost){
-        res.sendStatus(HttpStatus.NotFound)
-        return
-      }
-      res.status(HttpStatus.Ok).send(getPostViewModel(foundPost))
-  });
+    postsRouter.get(POSTS_ROUTES.BY_ID, getPostHandler);
 
-postsRouter.post("/", (req: RequestWithBody<PostInputDto>, res: Response) => {
-    const newPost = postRepository.createPost(req.body)
-      if(newPost===null){
-        res.sendStatus(HttpStatus.BadRequest)
-        return
-      }else{
-    res.status(HttpStatus.Created).send(getPostViewModel(newPost))
-      }
-    });
+    postsRouter.post(POSTS_ROUTES.ROOT, createPostHandler);
 
-     postsRouter.put("/:id", (req: RequestWithParamsAndBody<{id:string},PostInputDto>, res: Response) => {
-       if (!postRepository.updatePost(req.params.id, req.body)){
-              res.sendStatus(HttpStatus.NotFound)
-              return
-            }else{
-            res.sendStatus(HttpStatus.NoContent)}
-  });
+    postsRouter.put(POSTS_ROUTES.BY_ID, updatePostHandler);
 
-    postsRouter.delete("/:id", (req: RequestWithParams<{id:string}>, res: Response)=>{
-   if (!postRepository.deletePost(req.params.id)){
-       res.sendStatus(HttpStatus.NotFound)
-       return
-     } else{
-     res.sendStatus(HttpStatus.NoContent)
-     }
-})
+    postsRouter.delete(POSTS_ROUTES.BY_ID, deletePostHandler)
