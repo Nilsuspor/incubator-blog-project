@@ -3,8 +3,6 @@ import { PostViewModel } from "../dto/post.view.model";
 import { PostInputDto } from "../dto/post.input.dto";
 import { RequestWithParams,RequestWithBody,RequestWithParamsAndBody } from "../../core/types/request_types";
 import { Request, Response } from 'express';
-import { Post } from "../types/posts";
-import { db } from "../../db/in_memory.db";
 import { getPostViewModel } from "../post.mapper";
 import { HttpStatus } from "../../core/types/http-statuses";
 import { postRepository } from "../repository/post.repository";
@@ -43,14 +41,10 @@ postsRouter.post("/", (req: RequestWithBody<PostInputDto>, res: Response) => {
   });
 
     postsRouter.delete("/:id", (req: RequestWithParams<{id:string}>, res: Response)=>{
-    const idToDelete = req.params.id;
-    const postIndex = db.posts.findIndex((blog)=>blog.id===idToDelete)
-
-    if (postRepository.deletePost(req.params.id)){
-        res.sendStatus(HttpStatus.NotFound)
-    return
-    }
-
-    db.posts.splice(postIndex,1)
-    res.sendStatus(HttpStatus.NoContent)
+   if (!postRepository.deletePost(req.params.id)){
+       res.sendStatus(HttpStatus.NotFound)
+       return
+     } else{
+     res.sendStatus(HttpStatus.NoContent)
+     }
 })

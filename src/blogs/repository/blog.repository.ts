@@ -4,7 +4,7 @@ import { BlogInputDto } from "../dto/blog.input.dto";
 
 
 export const blogsRepository = {
-     getAllBlogs(): Blog[]{
+     FindAllBlogs(): Blog[]{
         return db.blogs
     },
     
@@ -28,12 +28,12 @@ export const blogsRepository = {
        const foundBlog = db.blogs.find((b)=>b.id===id)
         if (!foundBlog){
             return false
-        }else {
+            }
             foundBlog.name =body.name
             foundBlog.description = body.description
             foundBlog.websiteUrl = body.websiteUrl
             return true
-        }
+        
     },
 
     deleteBlog(id:string):boolean{

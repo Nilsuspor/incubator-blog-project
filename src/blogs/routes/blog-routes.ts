@@ -1,45 +1,19 @@
 import { Router } from "express";
-import { BlogViewModel } from "../dto/blog.view.model";
-import { BlogInputDto } from "../dto/blog.input.dto";
-import { RequestWithParams,RequestWithBody,RequestWithParamsAndBody } from "../../core/types/request_types";
-import { Request, Response } from 'express';
-import { getBlogViewModel } from "../blog.mapper";
-import { HttpStatus } from "../../core/types/http-statuses";
-import { blogsRepository } from "../repository/blog.repository";
+import { BLOGS_ROUTES } from "../constants/blogs.path";
+import { getBlogListHandler } from "./handlers/get-blog-list.handler";
+import { getBlogHandler } from "./handlers/get-blog.handler";
+import { createBlogHandler } from "./handlers/create-blog.handler";
+import { updateBlogHandler } from "./handlers/update-blog.handler";
+import { deleteBlogHandler } from "./handlers/delete-blog.handler";
 
 export const blogsRouter = Router({})
 
-   blogsRouter.get("/", (req: Request, res: Response<BlogViewModel[]>) => {
-    res.status(HttpStatus.Ok).send(blogsRepository.getAllBlogs().map(getBlogViewModel));
-  });
+   blogsRouter.get(BLOGS_ROUTES.ROOT, getBlogListHandler);
 
-    blogsRouter.get("/:id", (req: RequestWithParams<{id:string}>, res: Response<BlogViewModel>) => {
-      const foundBlog = blogsRepository.getBlogById(req.params.id)
-      if (!foundBlog){
-        res.sendStatus(HttpStatus.NotFound)
-        return
-      }
-      res.status(HttpStatus.Ok).send(getBlogViewModel(foundBlog));
-  });
+    blogsRouter.get(BLOGS_ROUTES.BY_ID, getBlogHandler);
 
-   blogsRouter.post("/", (req: RequestWithBody<BlogInputDto>, res: Response) => {
-    res.status(HttpStatus.Created).send(getBlogViewModel(blogsRepository.createBlog(req.body)))
-    });
+   blogsRouter.post(BLOGS_ROUTES.ROOT, createBlogHandler);
 
-    blogsRouter.put("/:id", (req: RequestWithParamsAndBody<{id:string},BlogInputDto>,  res: Response) => {
-      if (!blogsRepository.updateBlog(req.params.id, req.body)){
-        res.sendStatus(HttpStatus.NotFound)
-        return
-      }else{
-      res.sendStatus(HttpStatus.NoContent)}
-  });
+    blogsRouter.put(BLOGS_ROUTES.BY_ID, updateBlogHandler);
 
-blogsRouter.delete("/:id", (req: RequestWithParams<{id:string}>, res: Response)=>{
- 
-  if (!blogsRepository.deleteBlog(req.params.id)){
-    res.sendStatus(HttpStatus.NotFound)
-    return
-  } else{
-  res.sendStatus(HttpStatus.NoContent)
-  }
-})
+    blogsRouter.delete(BLOGS_ROUTES.BY_ID, deleteBlogHandler)
