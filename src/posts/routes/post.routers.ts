@@ -8,7 +8,6 @@ import { deletePostHandler } from "./handlers/delete-post.handler";
 import { postInputDtoValidation } from "../validation/post.input-dto.validation-middlewares";
 import { inputValidationResultMiddleware } from "../../core/middlewares/validation/input-validation-result.middleware";
 import { idValidation } from "../../core/middlewares/validation/params-id.validation.middleware";
-import { blogInputDtoValidation } from "../../blogs/validation/blog.input-dto.validation-middlewares";
 import { superAdminGuardMiddleware } from "../../auth/middlewares/super_admin.guard.middleware";
 
 
