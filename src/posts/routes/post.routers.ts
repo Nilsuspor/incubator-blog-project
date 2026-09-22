@@ -9,6 +9,7 @@ import { postInputDtoValidation } from "../validation/post.input-dto.validation-
 import { inputValidationResultMiddleware } from "../../core/middlewares/validation/input-validation-result.middleware";
 import { idValidation } from "../../core/middlewares/validation/params-id.validation.middleware";
 import { blogInputDtoValidation } from "../../blogs/validation/blog.input-dto.validation-middlewares";
+import { superAdminGuardMiddleware } from "../../auth/middlewares/super_admin.guard.middleware";
 
 
 export const postsRouter = Router({})
@@ -22,18 +23,21 @@ export const postsRouter = Router({})
         getPostHandler);
 
     postsRouter.post(POSTS_ROUTES.ROOT,
+        superAdminGuardMiddleware,
         postInputDtoValidation, 
         inputValidationResultMiddleware, 
         createPostHandler);
 
     postsRouter.put(
         POSTS_ROUTES.BY_ID, 
+        superAdminGuardMiddleware,
         idValidation, 
         postInputDtoValidation,
         inputValidationResultMiddleware, 
         updatePostHandler);
 
     postsRouter.delete(POSTS_ROUTES.BY_ID, 
+        superAdminGuardMiddleware,
         idValidation,
         inputValidationResultMiddleware,
         deletePostHandler)
