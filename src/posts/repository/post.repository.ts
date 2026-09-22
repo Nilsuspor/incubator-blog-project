@@ -2,7 +2,7 @@ import { db } from "../../db/in_memory.db";
 import { Post } from "../types/posts";
 import { PostInputDto } from "../dto/post.input.dto";
 import { create } from "node:domain";
-
+import { blogsRepository } from "../../blogs/repository/blog.repository";
 
 export const postRepository = {
      getAllPosts(): Post[]{
@@ -15,7 +15,7 @@ export const postRepository = {
 
     createPost(body :PostInputDto):Post|null{
             const lastPost = db.posts[db.posts.length - 1];
-             const foundBlog = (db.blogs.find((b)=>b.id===body.blogId))
+             const foundBlog = blogsRepository.getBlogById(body.blogId)
              
               if(!foundBlog){
                
@@ -40,7 +40,7 @@ export const postRepository = {
         if (!foundPost){
             return false
         }
-        const foundBlog = (db.blogs.find((b)=>b.id===body.blogId)) 
+        const foundBlog = blogsRepository.getBlogById(body.blogId) 
         if (!foundBlog){
             return false
         }
@@ -63,6 +63,11 @@ export const postRepository = {
         }
         db.posts.splice(postIndex,1)
         return true
+},
+
+    deletePostsByBlogId(blogId: string): boolean {
+    db.posts = db.posts.filter((post) => post.blogId !== blogId);
+    return true; 
 }
 
 }
