@@ -8,6 +8,7 @@ import { deletePostHandler } from "./handlers/delete-post.handler";
 import { postInputDtoValidation } from "../validation/post.input-dto.validation-middlewares";
 import { inputValidationResultMiddleware } from "../../core/middlewares/validation/input-validation-result.middleware";
 import { idValidation } from "../../core/middlewares/validation/params-id.validation.middleware";
+import { blogInputDtoValidation } from "../../blogs/validation/blog.input-dto.validation-middlewares";
 
 
 export const postsRouter = Router({})
@@ -18,8 +19,6 @@ export const postsRouter = Router({})
 
     postsRouter.get(
         POSTS_ROUTES.BY_ID,
-        idValidation, 
-        inputValidationResultMiddleware, 
         getPostHandler);
 
     postsRouter.post(POSTS_ROUTES.ROOT,
