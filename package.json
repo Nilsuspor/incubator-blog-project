@@ -3,7 +3,8 @@
   "packageManager": "yarn@4.18.0",
   "dependencies": {
     "express": "^5.2.1",
-    "express-validator": "^7.3.2"
+    "express-validator": "^7.3.2",
+    "mongodb": "^7.6.0"
   },
   "scripts": {
     "watch": "tsc -w",

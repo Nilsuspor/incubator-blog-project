@@ -2,9 +2,12 @@ import { db } from "../../db/in_memory.db";
 import { Blog } from "../types/blogs";
 import { BlogInputDto } from "../dto/blog.input.dto";
 
+import { blogCollection } from "../../db/collections";
+import { WithId } from "mongodb";
+
 export const blogsRepository = {
-     FindAllBlogs(): Blog[]{
-        return db.blogs
+     async FindAllBlogs(): Promise<WithId<Blog>[]>{
+        return blogCollection.find().toArray()
     },
     
     getBlogById(id : string): Blog|undefined{

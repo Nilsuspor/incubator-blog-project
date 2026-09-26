@@ -4,6 +4,17 @@ import { blogsRepository } from "../../repository/blog.repository";
 import { getBlogViewModel } from "../../blog.mapper";
 
 
-export function getBlogListHandler(req: Request, res: Response){
-    res.status(HttpStatus.Ok).send(blogsRepository.FindAllBlogs().map(getBlogViewModel));
+export async function getBlogListHandler(req: Request, res: Response){
+
+try {
+   const blogs = await blogsRepository.FindAllBlogs()
+   const blogsViewModels = blogs.map(getBlogViewModel)
+   res.send(blogsViewModels)
 }
+catch{
+   res.sendStatus(HttpStatus.InternalServerError)
+}
+   //res.status(HttpStatus.Ok).send(blogsRepository.FindAllBlogs().map(getBlogViewModel));
+}
+
+
