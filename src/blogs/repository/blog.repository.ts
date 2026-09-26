@@ -10,43 +10,32 @@ export const blogsRepository = {
         return blogCollection.find().toArray()
     },
     
-    getBlogById(id : string): Blog|undefined{
-       return db.blogs.find((b)=>b.id===id)
+    async getBlogById(id : string): Promise<WithId<Blog>|null>{
+       return blogCollection.findOne({_id:new Object(id)})
     },
 
-    createBlog(body : BlogInputDto): Blog{
-        const lastBlog = db.blogs[db.blogs.length -1]
-        const newBlog: Blog ={
-      id:lastBlog?((+lastBlog.id+1).toString()):'1',
-      name:body.name,
-      description:body.description,
-      websiteUrl:body.websiteUrl
-    }
-    db.blogs.push(newBlog)
-    return newBlog
+    async createBlog(newBlog : Blog): Promise<WithId<Blog>>{
+       const insertResult = await blogCollection.insertOne(newBlog)
+    return {...newBlog, _id:insertResult.insertedId}
     },
 
-    updateBlog (id : string, body: BlogInputDto):boolean{
-       const foundBlog = db.blogs.find((b)=>b.id===id)
-        if (!foundBlog){
-            return false
-            }
-            foundBlog.name =body.name
-            foundBlog.description = body.description
-            foundBlog.websiteUrl = body.websiteUrl
+
+
+     async updateBlog (id : string, blog: Omit<Blog, 'createdAt'|'isMembership'>):Promise<boolean>{
+        const updatedResult = await blogCollection.updateOne(
+          {_id: new Object(id)},
+          {$set: blog}
+        )
             return true
         
     },
 
-    deleteBlog(id:string):boolean{
-        const idToDelete = id;
-          const blogIndex = db.blogs.findIndex((blog)=>blog.id===idToDelete)
-        
-          if (blogIndex<0){
-            return false
-          }        
-          db.blogs.splice(blogIndex,1)
-          return true
+    async deleteBlog(id:string):Promise<boolean>{
+      const deleteResult = await blogCollection.deleteOne({
+        _id: new Object(id)
+      })
+
+      return deleteResult.deletedCount>0
     }
 
 

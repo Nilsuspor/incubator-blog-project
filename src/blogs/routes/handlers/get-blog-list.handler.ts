@@ -14,7 +14,7 @@ try {
 catch{
    res.sendStatus(HttpStatus.InternalServerError)
 }
-   //res.status(HttpStatus.Ok).send(blogsRepository.FindAllBlogs().map(getBlogViewModel));
+  
 }
 
 

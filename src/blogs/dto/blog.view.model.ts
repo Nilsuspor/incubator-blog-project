@@ -21,4 +21,8 @@ export type BlogViewModel = {
    * @example "https://example.com"
    */
   websiteUrl: string;
+
+  createdAt:string;
+
+  isMembership: boolean;
 };
