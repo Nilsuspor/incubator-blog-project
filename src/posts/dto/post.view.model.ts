@@ -16,4 +16,6 @@ export type PostViewModel = {
 
   /** Name of the related blog */
   blogName: string;
+
+  createdAt?: string
 };

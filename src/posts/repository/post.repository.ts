@@ -2,70 +2,44 @@ import { db } from "../../db/in_memory.db";
 import { Post } from "../types/posts";
 import { PostInputDto } from "../dto/post.input.dto";
 import { blogsRepository } from "../../blogs/repository/blog.repository";
+import { ObjectId, WithId } from "mongodb";
+import { postCollection } from "../../db/collections";
 
 export const postRepository = {
-     getAllPosts(): Post[]{
-        return db.posts
+     
+    
+    async getAllPosts(): Promise<WithId<Post>[]>{
+        return postCollection.find().toArray()
     },
 
-    getPostById(id : string): Post|undefined{
-       return db.posts.find((b)=>b.id===id)
+    async getPostById(id : string): Promise<WithId<Post>|null>{
+       return postCollection.findOne({_id:new ObjectId(id)})
     },
 
-    createPost(body :PostInputDto):Post{
-            const lastPost = db.posts[db.posts.length - 1];
-             const foundBlog = blogsRepository.getBlogById(body.blogId)
-            if (!foundBlog) {
-        throw new Error("Blog not found");
-    } 
-            
-              const newPost: Post ={
-              id:lastPost ? (+lastPost.id + 1).toString() : "1",
-              title:body.title,
-              shortDescription:body.shortDescription,
-              content:body.content,
-              blogId:body.blogId,
-             
-              blogName:foundBlog.name
-            }
-            db.posts.push(newPost)
-        
-        return newPost
+    async createPost(newPost :Post):Promise<WithId<Post>>{
+         const inertResult = await postCollection.insertOne(newPost)
+         return {...newPost, _id:inertResult.insertedId}
+
     },
 
-    updatePost(id:string, body:PostInputDto): boolean{
-         const foundPost = db.posts.find((b)=>b.id===id) 
-        if (!foundPost){
-            return false
-        }
-        const foundBlog = blogsRepository.getBlogById(body.blogId) 
-        if (!foundBlog){
-            return false
-        }
-        else {
-        foundPost.title = body.title
-        foundPost.shortDescription = body.shortDescription
-        foundPost.content =body.content
-        foundPost.blogId =body.blogId
-        foundPost.blogName = foundBlog.name
-            return true
-        }
+   async updatePost(id:string, post:Omit<Post,'createdAt'|'blogName'>):Promise< boolean>{
+        const updateResult = await postCollection.updateOne(
+            {_id:new ObjectId(id)},
+            {$set:post}
+        )
+        return updateResult.matchedCount>0
     },
 
-    deletePost(id:string):boolean{
-        const idToDelete = id;
-        const postIndex = db.posts.findIndex((post)=>post.id===idToDelete)
-
-        if (postIndex<0){
-        return false
-        }
-        db.posts.splice(postIndex,1)
-        return true
+     async deletePost(id:string):Promise<boolean>{
+        const deleteResult = await postCollection.deleteOne({
+            _id: new ObjectId(id)})
+        return deleteResult.deletedCount>0
 },
 
-    deletePostsByBlogId(blogId: string): boolean {
-    db.posts = db.posts.filter((post) => post.blogId !== blogId);
-    return true; 
+   async deletePostsByBlogId(blogId: string) {
+    await postCollection.deleteMany({blogId})
+    
+    return 
 }
 
 }
