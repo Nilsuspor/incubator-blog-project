@@ -4,7 +4,7 @@ import { Request, Response } from "express";
 import { HttpStatus } from "../../../core/types/http-statuses";
 import { postRepository } from "../../../posts/repository/post.repository";
 import { createErrorMessages } from "../../../core/middlewares/validation/input-validation-result.middleware";
-import { sensitiveHeaders } from "node:http2";
+import { generateBasicAuthToken } from "../../../__tests__/utils/generate-admin-auth-token";
 
 export async function deleteBlogHandler (req: RequestWithParams<{id:string}>,
     res: Response){

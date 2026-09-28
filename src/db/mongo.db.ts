@@ -20,3 +20,8 @@ export async function runDB(url: string): Promise<void> {
     throw new Error(`❌ Database not connected: ${e}`);
   }
 }
+
+export async function stopDb() {
+    await client.close();
+    console.log("Connection to db closed");
+}

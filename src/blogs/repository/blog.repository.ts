@@ -1,7 +1,5 @@
-import { db } from "../../db/in_memory.db";
-import { Blog } from "../types/blogs";
-import { BlogInputDto } from "../dto/blog.input.dto";
 
+import { Blog } from "../types/blogs";
 import { blogCollection } from "../../db/collections";
 import { ObjectId, WithId } from "mongodb";
 

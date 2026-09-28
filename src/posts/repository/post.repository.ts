@@ -1,7 +1,5 @@
-import { db } from "../../db/in_memory.db";
+
 import { Post } from "../types/posts";
-import { PostInputDto } from "../dto/post.input.dto";
-import { blogsRepository } from "../../blogs/repository/blog.repository";
 import { ObjectId, WithId } from "mongodb";
 import { postCollection } from "../../db/collections";
 
@@ -34,12 +32,12 @@ export const postRepository = {
         const deleteResult = await postCollection.deleteOne({
             _id: new ObjectId(id)})
         return deleteResult.deletedCount>0
-},
+    },
 
    async deletePostsByBlogId(blogId: string) {
     await postCollection.deleteMany({blogId})
     
     return 
-}
+    }
 
 }
