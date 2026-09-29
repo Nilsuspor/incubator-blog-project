@@ -31,7 +31,7 @@ describe('/blogs',()=>{
     await stopDb();
   });
 
-it('should not create blog when incorret body passed; POST /drivers', async ()=>{
+it('should not create blog when incorret body passed; POST /blogs', async ()=>{
     await request(app)
     .post(BLOGS_PATH)
     .send(correctTestBlogData)
