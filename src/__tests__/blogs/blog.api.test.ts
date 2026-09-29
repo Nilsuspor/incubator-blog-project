@@ -44,7 +44,7 @@ describe('/blogs',()=>{
        
     })
 
-    it('should return blogs list GET /drivers', async()=>{
+    it('✅should return blogs list GET /drivers', async()=>{
         await createBlog(app);
         await createBlog(app)
 
@@ -57,7 +57,7 @@ describe('/blogs',()=>{
     expect(response.body.length).toBeGreaterThanOrEqual(2);
     })
 
-    it ('should return blog by id; GET /blogs/:id', async ()=>{
+    it ('✅should return blog by id; GET /blogs/:id', async ()=>{
       const createdBlog = await createBlog(app)
       
       const blog = await getBlogById(app,  createdBlog.id)
@@ -67,7 +67,7 @@ describe('/blogs',()=>{
     })
 
 
-    it('should update blog; PUT /blogs/:id', async()=>{
+    it('✅should update blog; PUT /blogs/:id', async()=>{
       const createdBlog = await createBlog(app)
 
       const blogUpdateData:BlogInputDto ={
@@ -91,7 +91,7 @@ describe('/blogs',()=>{
 
     })
 
-   it('should delete driver and check after "NOT FOUND"; DELETE /blogers/:id', async()=>{
+   it('✅should delete blog and check after "NOT FOUND"; DELETE /blogers/:id', async()=>{
       const createdBlog = await createBlog(app)
 
       await request(app)

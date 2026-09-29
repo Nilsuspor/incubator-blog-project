@@ -15,12 +15,10 @@ export async function createPostHandler(req: RequestWithBody<PostInputDto>,
   res: Response<PostViewModel|ValidationErrorDto>){
     try{
       const foundBlog = await blogsRepository.getBlogById(req.body.blogId)
-      if (!foundBlog){
-        res.status(HttpStatus.NotFound)
-            .send(createErrorMessages([{message:'Blog not found',field:'BlogId'}])
-          )
-            return
-      }
+      if (!foundBlog) {
+      res.sendStatus(HttpStatus.InternalServerError);
+      return;
+    }
 
       const newPost = {
         ...mapPostInputDtoToPost(req.body),

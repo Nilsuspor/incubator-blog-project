@@ -20,7 +20,7 @@ export const postRepository = {
 
     },
 
-   async updatePost(id:string, post:Omit<Post,'createdAt'|'blogName'>):Promise< boolean>{
+   async updatePost(id:string, post:Omit<Post,'createdAt'>):Promise< boolean>{
         const updateResult = await postCollection.updateOne(
             {_id:new ObjectId(id)},
             {$set:post}

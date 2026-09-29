@@ -26,15 +26,13 @@ const contentValidation = body('content')
 const blogIdValidation = body('blogId')
     .isString()
     .withMessage('blogId should be string')
-    .isNumeric()
-    .withMessage('blogId must be a numeric string')
-    .custom((value)=>{
-        const blog = blogsRepository.getBlogById(value);
-        if (!blog){
-            return false
-        }
-        return true;
-    })
+    .custom(async (value) => {
+  const blog = await blogsRepository.getBlogById(value);
+  if (!blog) {
+    throw new Error('Blog not found');
+  }
+  return true;
+})
     .withMessage('Blog not found')
       
 
