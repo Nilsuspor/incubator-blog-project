@@ -28,11 +28,13 @@ export const postRepository = {
         return updateResult.matchedCount>0
     },
 
-     async deletePost(id:string):Promise<boolean>{
-        const deleteResult = await postCollection.deleteOne({
-            _id: new ObjectId(id)})
-        return deleteResult.deletedCount>0
-    },
+     async deletePost(id: string): Promise<boolean> {
+  const deleteResult = await postCollection.deleteOne({
+    _id: new ObjectId(id),
+  });
+
+  return deleteResult.deletedCount > 0;
+},
 
    async deletePostsByBlogId(blogId: string) {
     await postCollection.deleteMany({blogId})
