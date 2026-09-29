@@ -18,6 +18,7 @@ export async function deleteBlogHandler (req: RequestWithParams<{id:string}>,
            return
        }
         await blogsRepository.deleteBlog(id)
+        await postRepository.deletePostsByBlogId(id)
         res.sendStatus(HttpStatus.NoContent)
        }catch{
           res.sendStatus(HttpStatus.InternalServerError)
