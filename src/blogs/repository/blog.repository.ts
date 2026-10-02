@@ -18,8 +18,6 @@ export const blogsRepository = {
     return {...newBlog, _id:insertResult.insertedId}
     },
 
-
-
      async updateBlog (id : string, blog: Omit<Blog, 'createdAt'|'isMembership'>):Promise<boolean>{
         const updateResult = await blogCollection.updateOne(
           {_id: new ObjectId(id)},

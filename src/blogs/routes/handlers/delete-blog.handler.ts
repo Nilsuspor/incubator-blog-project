@@ -5,20 +5,21 @@ import { HttpStatus } from "../../../core/types/http-statuses";
 import { postRepository } from "../../../posts/repository/post.repository";
 import { createErrorMessages } from "../../../core/middlewares/validation/input-validation-result.middleware";
 import { generateBasicAuthToken } from "../../../__tests__/utils/generate-admin-auth-token";
+import { BlogService } from "../../application/blogs.servise";
 
 export async function deleteBlogHandler (req: RequestWithParams<{id:string}>,
     res: Response){
    try{
-           const id = req.params.id
-           const foundBlog = await blogsRepository.getBlogById(id)
-               if (!foundBlog){
+           
+           const isBlogDeleted = await BlogService.deleteBlogService(req.params.id)
+               if (!isBlogDeleted){
            res.status(HttpStatus.NotFound)
            .send(createErrorMessages([{message:'Blog not found',field:'id'}])
          )
            return
        }
-        await blogsRepository.deleteBlog(id)
-        await postRepository.deletePostsByBlogId(id)
+        //await blogsRepository.deleteBlog(id)
+        //await postRepository.deletePostsByBlogId(id)
         res.sendStatus(HttpStatus.NoContent)
        }catch{
           res.sendStatus(HttpStatus.InternalServerError)
