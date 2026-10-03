@@ -5,14 +5,14 @@ import { BlogInputDto } from "../dto/blog.input.dto";
 import { mapBlogInputDtoToBlog } from "../routes/mappers/map-blog-input-dto-to-blog.util";
 
 
-export const BlogService = {
-    async FindAllBlogsServise(): Promise<BlogViewModel[]>{
+export const BlogServices = {
+    async FindAllBlogsService(): Promise<BlogViewModel[]>{
                const blogsFromDb = await blogsRepository.FindAllBlogs()
                return blogsFromDb.map(mapToBlogViewModel)
         },
 
 
-    async getBlogByIdServise(id:string): Promise<BlogViewModel|null>{
+    async getBlogByIdService(id:string): Promise<BlogViewModel|null>{
         const foundBlog = await blogsRepository.getBlogById(id)
         if (!foundBlog){
             return null
@@ -20,7 +20,7 @@ export const BlogService = {
         return mapToBlogViewModel(foundBlog)
     },
 
-    async createBlogServise(blog: BlogInputDto): Promise<BlogViewModel>{
+    async createBlogService(blog: BlogInputDto): Promise<BlogViewModel>{
          const newBlog = {
                     ...mapBlogInputDtoToBlog(blog),
                     createdAt: new Date().toISOString(),
@@ -31,7 +31,7 @@ export const BlogService = {
         return mapToBlogViewModel(createdBlog) 
         },
         
-    async updateBlogServise(id:string, body: BlogInputDto): Promise<boolean>{
+    async updateBlogService(id:string, body: BlogInputDto): Promise<boolean>{
         const isUpdated = await blogsRepository.updateBlog(id, mapBlogInputDtoToBlog(body))
         return isUpdated;
     },

@@ -1,13 +1,11 @@
 import { Request, Response } from "express";
 import { HttpStatus } from "../../../core/types/http-statuses";
-import { postRepository } from "../../repository/post.repository";
 import { PostViewModel } from "../../dto/post.view.model";
-import { mapToPostViewModel } from "../mappers/map-to post-view-model.util";
+import { PostServices } from "../../application/post.servise";
 export async function  getPostListHandler(req: Request, res: Response<PostViewModel[]>){
     try{
-        const posts = await postRepository.getAllPosts()
-        const postViewModel = posts.map(mapToPostViewModel)
-        res.status(HttpStatus.Ok).send(postViewModel)
+        const allPosts = await PostServices.FindAllPostsService()
+        res.status(HttpStatus.Ok).send(allPosts)
     } catch{
              res.sendStatus(HttpStatus.InternalServerError)
   

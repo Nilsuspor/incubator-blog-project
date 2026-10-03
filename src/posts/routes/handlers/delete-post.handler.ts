@@ -3,20 +3,21 @@ import { HttpStatus } from "../../../core/types/http-statuses";
 import { postRepository } from "../../repository/post.repository";
 import { RequestWithParams } from "../../../core/types/request_types";
 import { createErrorMessages } from "../../../core/middlewares/validation/input-validation-result.middleware";
+import { PostServices } from "../../application/post.servise";
 
 export async function deletePostHandler(
   req: RequestWithParams<{ id: string }>,
   res: Response,
 ) {
   try {
-    const isDeleted = await postRepository.deletePost(req.params.id);
+    const isDeleted = await PostServices.deletePostService(req.params.id);
 
     if (!isDeleted) {
-      res.sendStatus(HttpStatus.NotFound); // 404, если поста нет
+      res.sendStatus(HttpStatus.NotFound); 
       return;
     }
 
-    res.sendStatus(HttpStatus.NoContent); // 204, если успешно удалили
+    res.sendStatus(HttpStatus.NoContent); 
   } catch (error) {
     res.sendStatus(HttpStatus.InternalServerError);
   }
