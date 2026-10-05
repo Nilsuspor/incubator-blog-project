@@ -3,12 +3,15 @@ import { mapToBlogViewModel } from "../routes/mappers/map-to-blog-view-model.uti
 import { BlogViewModel } from "../dto/blog.view.model";
 import { BlogInputDto } from "../dto/blog.input.dto";
 import { mapBlogInputDtoToBlog } from "../routes/mappers/map-blog-input-dto-to-blog.util";
-
+import { BlogQueryInput } from "../routes/input/blog-query.input";
+import { WithId } from "mongodb";
+import { Blog } from "../types/blogs";
 
 export const BlogServices = {
-    async FindAllBlogsService(): Promise<BlogViewModel[]>{
-               const blogsFromDb = await blogsRepository.FindAllBlogs()
-               return blogsFromDb.map(mapToBlogViewModel)
+    async findMany(queryDto: BlogQueryInput
+    ): Promise<{items:WithId<Blog>[]; totalCount: number}>{
+               
+        return blogsRepository.findMany(queryDto)
         },
 
 

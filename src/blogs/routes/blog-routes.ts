@@ -9,11 +9,17 @@ import { blogInputDtoValidation } from "../validation/blog.input-dto.validation-
 import { inputValidationResultMiddleware } from "../../core/middlewares/validation/input-validation-result.middleware";
 import { idValidation } from "../../core/middlewares/validation/params-id.validation.middleware";
 import { superAdminGuardMiddleware } from "../../auth/middlewares/super_admin.guard.middleware";
-
+import { paginationAndSortingValidation } from "../../core/middlewares/validation/query-pagination-sorting.validation.middleware";
+import { BlogSortFields } from "./input/blog-sort-field";
+import { sanitizeQueryParams } from "../../core/middlewares/validation/sanitize-query-middleware";
 
 export const blogsRouter = Router({})
 
-   blogsRouter.get(BLOGS_ROUTES.ROOT, getBlogListHandler);
+   blogsRouter.get(BLOGS_ROUTES.ROOT, 
+    paginationAndSortingValidation(BlogSortFields),
+    inputValidationResultMiddleware,
+    sanitizeQueryParams,
+    getBlogListHandler);
 
     blogsRouter.get(
       BLOGS_ROUTES.BY_ID,

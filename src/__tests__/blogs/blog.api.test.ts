@@ -31,10 +31,10 @@ describe('/blogs',()=>{
     await stopDb(); 
   });
 
-    it('✅should return 200 and empty array', async()=>{
+    it('✅should return 200 and empty object', async()=>{
         await request(app)
         .get('/blogs')
-        .expect(200, [])
+        .expect(200, {})
     })
 
     it('✅ should create blog; POST /blogs', async()=>{
