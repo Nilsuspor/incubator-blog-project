@@ -12,7 +12,6 @@ import { BLOGS_PATH } from '../../blogs/constants/blogs.path';
 import { HttpStatus } from '../../core/types/http-statuses';
 import { updateBlog } from '../utils/blogs/update-blog';
 import { getBlogById } from '../utils/blogs/get-blog-by-id';
-export {};
 
 describe('/blogs',()=>{
     const app = express();
@@ -34,7 +33,12 @@ describe('/blogs',()=>{
     it('✅should return 200 and empty object', async()=>{
         await request(app)
         .get('/blogs')
-        .expect(200, {})
+        .expect(200, {pagesCount: 0, 
+        page: 1, 
+        pageSize: 10, 
+        totalCount: 0, 
+         items: []
+})
     })
 
     it('✅ should create blog; POST /blogs', async()=>{
@@ -44,7 +48,7 @@ describe('/blogs',()=>{
        
     })
 
-    it('✅should return blogs list GET /drivers', async()=>{
+    it('✅should return blogs list GET /blogs', async()=>{
         await createBlog(app);
         await createBlog(app)
 
@@ -53,8 +57,8 @@ describe('/blogs',()=>{
         .set('Authorization', adminToken)
         .expect(HttpStatus.Ok)
 
-        expect(response.body).toBeInstanceOf(Array);
-    expect(response.body.length).toBeGreaterThanOrEqual(2);
+        expect(response.body.items).toBeInstanceOf(Array);
+    expect(response.body.items.length).toBeGreaterThanOrEqual(2);
     })
 
     it ('✅should return blog by id; GET /blogs/:id', async ()=>{

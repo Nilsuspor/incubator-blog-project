@@ -54,7 +54,7 @@ const invalidDataSet1 = await request(app)
  const blogListResponse = await request(app)
  .get(BLOGS_PATH)
  .set('Authorization', adminToken)   
- expect(blogListResponse.body).toHaveLength(0)
+ expect(blogListResponse.body.items).toHaveLength(0)
 
 })
 

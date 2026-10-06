@@ -8,7 +8,7 @@ export function buildBlogPagination(
   pageSize: number
 ) {
   return {
-    pagesCount: Math.ceil(totalCount / pageSize), // Считаем математику здесь!
+    pagesCount: Math.ceil(totalCount / pageSize),
     page: pageNumber,
     pageSize: pageSize,
     totalCount: totalCount,

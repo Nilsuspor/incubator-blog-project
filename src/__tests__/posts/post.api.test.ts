@@ -31,10 +31,15 @@ describe('/posts',()=>{
     await stopDb(); 
   });
 
-  it('✅should return 200 and empty array', async()=>{
+  it('✅should return 200 and empty object', async()=>{
           await request(app)
           .get('/posts')
-          .expect(200, [])
+           .expect(200, {pagesCount: 0, 
+        page: 1, 
+        pageSize: 10, 
+        totalCount: 0, 
+         items: []
+})
       })
 
  it('✅ should create post; POST /posts', async()=>{

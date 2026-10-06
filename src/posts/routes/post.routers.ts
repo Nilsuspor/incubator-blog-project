@@ -10,13 +10,17 @@ import { inputValidationResultMiddleware } from "../../core/middlewares/validati
 import { idValidation } from "../../core/middlewares/validation/params-id.validation.middleware";
 import { superAdminGuardMiddleware } from "../../auth/middlewares/super_admin.guard.middleware";
 import { paginationAndSortingValidation } from "../../core/middlewares/validation/query-pagination-sorting.validation.middleware";
+import { PostSortFields } from "./input/post-sort-fields";
+import { sanitizeQueryParams } from "../../core/middlewares/validation/sanitize-query-middleware";
 
 
 export const postsRouter = Router({})
 
     postsRouter.get(
         POSTS_ROUTES.ROOT, 
-        paginationAndSortingValidation,    
+        paginationAndSortingValidation(PostSortFields),
+        inputValidationResultMiddleware,
+        sanitizeQueryParams,    
         getPostListHandler);
 
     postsRouter.get(

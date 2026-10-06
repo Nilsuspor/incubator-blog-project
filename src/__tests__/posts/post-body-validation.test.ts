@@ -63,6 +63,6 @@ describe('/posts', () => {
       .get(POSTS_PATH)
       .expect(HttpStatus.Ok);
 
-    expect(response.body).toHaveLength(0);
+    expect(response.body.items).toHaveLength(0);
   });
 });

@@ -12,6 +12,8 @@ import { superAdminGuardMiddleware } from "../../auth/middlewares/super_admin.gu
 import { paginationAndSortingValidation } from "../../core/middlewares/validation/query-pagination-sorting.validation.middleware";
 import { BlogSortFields } from "./input/blog-sort-field";
 import { sanitizeQueryParams } from "../../core/middlewares/validation/sanitize-query-middleware";
+import { getPostByBlogId } from "./handlers/get-posts-by-blog-id";
+import { PostSortFields } from "../../posts/routes/input/post-sort-fields";
 
 export const blogsRouter = Router({})
 
@@ -27,6 +29,14 @@ export const blogsRouter = Router({})
         inputValidationResultMiddleware, 
         getBlogHandler);
     
+      blogsRouter.get(
+      BLOGS_ROUTES.BLOG_POSTS,
+       idValidation,
+       paginationAndSortingValidation(PostSortFields),
+        inputValidationResultMiddleware, 
+        sanitizeQueryParams,
+        getPostByBlogId);
+
 
    blogsRouter.post(
       BLOGS_ROUTES.ROOT, 

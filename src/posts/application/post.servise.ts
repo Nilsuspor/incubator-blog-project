@@ -4,11 +4,13 @@ import { postRepository } from "../repository/post.repository"
 import { mapToPostViewModel } from "../routes/mappers/map-to post-view-model.util"
 import { blogsRepository } from "../../blogs/repository/blog.repository"
 import { mapPostInputDtoToPost } from "../routes/mappers/map-post-input-dto-to-post.util"
+import { PostQueryInput } from "../routes/input/post-query.input"
+import { WithId } from "mongodb"
+import { Post } from "../types/posts"
 
 export const PostServices = {
-    async FindAllPostsService(): Promise<PostViewModel[]>{
-                   const postsFromDb = await postRepository.getAllPosts()
-                   return postsFromDb.map(mapToPostViewModel)
+    async findMany(queryDto: PostQueryInput, blogId?: string): Promise<{items: WithId<Post>[]; totalCount: number}>{
+                          return postRepository.findMany(queryDto, blogId)
             },
 
     async getPostByIdService(id:string): Promise<PostViewModel|null>{

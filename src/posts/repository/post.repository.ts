@@ -2,12 +2,37 @@
 import { Post } from "../types/posts";
 import { ObjectId, WithId } from "mongodb";
 import { postCollection } from "../../db/collections";
+import { PostQueryInput } from "../routes/input/post-query.input";
 
 export const postRepository = {
      
     
-    async getAllPosts(): Promise<WithId<Post>[]>{
-        return postCollection.find().toArray()
+    async findMany(queryDto: PostQueryInput, blogId?: string): Promise<{items:WithId<Post>[]; totalCount:number}>{
+       const {
+      pageNumber,
+      pageSize,
+      sortBy,
+      sortDirection,
+     } = queryDto
+     const filter: any = {};
+        if (blogId) {
+            filter.blogId = blogId; 
+        }
+
+     const skip = (pageNumber - 1) * pageSize;
+     
+     
+     const items = await postCollection
+          .find({})
+          .sort({[sortBy]:sortDirection})
+          .skip(skip)
+          .limit(pageSize)
+          .toArray();
+
+       
+    const totalCount = await postCollection.countDocuments({})
+         return { items, totalCount };   
+        
     },
 
     async getPostById(id : string): Promise<WithId<Post>|null>{
