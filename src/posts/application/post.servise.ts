@@ -21,13 +21,14 @@ export const PostServices = {
             return mapToPostViewModel(foundPost)
         },
         
-    async createPostService(post:PostInputDto):Promise<PostViewModel|null>{
-        const foundBlog = await blogsRepository.getBlogById(post.blogId)
+    async createPostService(blogId: string, post:PostInputDto):Promise<PostViewModel|null>{
+        const foundBlog = await blogsRepository.getBlogById(blogId)
         if (!foundBlog){
             return null
         }
         const newPost = {
                 ...mapPostInputDtoToPost(post),
+                blogId: blogId,
                 createdAt: new Date().toISOString(),
                 blogName: foundBlog.name
               }

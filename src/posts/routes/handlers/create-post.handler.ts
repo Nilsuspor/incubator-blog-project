@@ -10,7 +10,8 @@ import { createErrorMessages } from "../../../core/middlewares/validation/input-
 export async function createPostHandler(req: RequestWithBody<PostInputDto>, 
   res: Response<PostViewModel|ValidationErrorDto>){
     try{
-      const createdPost = await PostServices.createPostService(req.body)
+      const blogId = req.body.blogId;
+      const createdPost = await PostServices.createPostService(blogId,req.body)
       if (!createdPost) {
       res.status(HttpStatus.NotFound).send(createErrorMessages([{message:'Blog not found',field:'BlogId'}]));
       return;
