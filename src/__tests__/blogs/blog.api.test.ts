@@ -110,4 +110,102 @@ describe('/blogs',()=>{
 
    }) 
 
+describe('Nested endpoints: /blogs/:id/posts', () => {
+    
+    it('✅ should return 404 if blog does not exist; POST /blogs/:id/posts', async () => {
+      const fakeMongoId = '6ac4f8c9c8ed4d1f039eafa5'; // Валидный по формату, но несуществующий ID
+      
+      await request(app)
+        .post(`${BLOGS_PATH}/${fakeMongoId}/posts`)
+        .set('Authorization', adminToken)
+        .send({
+          title: 'Valid title',
+          shortDescription: 'Valid short desc',
+          content: 'Valid content'
+        })
+        .expect(HttpStatus.NotFound);
+    });
+
+    it('✅ should return 400 if post data is invalid; POST /blogs/:id/posts', async () => {
+      const createdBlog = await createBlog(app);
+      
+      await request(app)
+        .post(`${BLOGS_PATH}/${createdBlog.id}/posts`)
+        .set('Authorization', adminToken)
+        .send({
+          title: '', // Ошибка: пустое поле
+          shortDescription: 'short desc',
+          content: 'content'
+        })
+        .expect(HttpStatus.BadRequest);
+    });
+
+    it('✅ should create a post for specific blog; POST /blogs/:id/posts', async () => {
+      const createdBlog = await createBlog(app);
+      const postData = {
+        title: 'New Post Title',
+        shortDescription: 'Very interesting post',
+        content: 'This is the main content of the post'
+      };
+
+      const response = await request(app)
+        .post(`${BLOGS_PATH}/${createdBlog.id}/posts`)
+        .set('Authorization', adminToken)
+        .send(postData)
+        .expect(HttpStatus.Created);
+
+      // Проверяем, что вернулся правильный объект поста (включая blogName из БД)
+      expect(response.body).toEqual({
+        id: expect.any(String),
+        title: postData.title,
+        shortDescription: postData.shortDescription,
+        content: postData.content,
+        blogId: createdBlog.id,
+        blogName: createdBlog.name,
+        createdAt: expect.any(String)
+      });
+    });
+
+    it('✅ should return empty pagination object; GET /blogs/:id/posts', async () => {
+      const createdBlog = await createBlog(app);
+
+      await request(app)
+        .get(`${BLOGS_PATH}/${createdBlog.id}/posts`)
+        .expect(HttpStatus.Ok, {
+          pagesCount: 0,
+          page: 1,
+          pageSize: 10,
+          totalCount: 0,
+          items: []
+        });
+    });
+
+    it('✅ should return pagination with posts; GET /blogs/:id/posts', async () => {
+      const createdBlog = await createBlog(app);
+      
+      // Создаем пост через API
+      const postResponse = await request(app)
+        .post(`${BLOGS_PATH}/${createdBlog.id}/posts`)
+        .set('Authorization', adminToken)
+        .send({
+          title: 'Post 1',
+          shortDescription: 'Desc 1',
+          content: 'Content 1'
+        })
+        .expect(HttpStatus.Created);
+
+      // Получаем список постов блога
+      const getResponse = await request(app)
+        .get(`${BLOGS_PATH}/${createdBlog.id}/posts`)
+        .expect(HttpStatus.Ok);
+
+      // Проверяем структуру пагинации и наличие созданного поста
+      expect(getResponse.body.items).toBeInstanceOf(Array);
+      expect(getResponse.body.items.length).toBe(1);
+      expect(getResponse.body.items[0]).toEqual(postResponse.body);
+      expect(getResponse.body.totalCount).toBe(1);
+    });
+
+  });
+
 })

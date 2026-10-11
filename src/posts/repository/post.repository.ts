@@ -23,14 +23,14 @@ export const postRepository = {
      
      
      const items = await postCollection
-          .find({})
+          .find(filter)
           .sort({[sortBy]:sortDirection})
           .skip(skip)
           .limit(pageSize)
           .toArray();
 
        
-    const totalCount = await postCollection.countDocuments({})
+    const totalCount = await postCollection.countDocuments(filter)
          return { items, totalCount };   
         
     },

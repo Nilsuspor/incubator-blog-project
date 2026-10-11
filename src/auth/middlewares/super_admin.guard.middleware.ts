@@ -1,34 +1,47 @@
 import { NextFunction, Request, Response } from 'express';
 import { HttpStatus } from '../../core/types/http-statuses';
-import { ADMIN_USERNAME,ADMIN_PASSWORD } from '../../settings/config';
+import { ADMIN_USERNAME, ADMIN_PASSWORD } from '../../settings/config';
 
 export const superAdminGuardMiddleware = (
-    req: Request,
+  req: Request,
   res: Response,
   next: NextFunction,
-) =>{
-    const auth = req.headers['authorization'] as string; // 'Basic xxxx'
+) => {
+  const authHeader = req.headers.authorization;
 
-  if (!auth) {
+  if (!authHeader) {
     res.sendStatus(HttpStatus.Unauthorized);
     return;
   }
 
-  const [authType, token] = auth.split(' ');
+  const parts = authHeader.split(' ');
+  
+  if (parts.length !== 2) {
+    res.sendStatus(HttpStatus.Unauthorized);
+    return;
+  }
+
+  const authType = parts[0];
+  const token = parts[1];
 
   if (authType !== 'Basic') {
     res.sendStatus(HttpStatus.Unauthorized);
     return;
   }
 
-  // Декодируем base64 и разбираем на логин и пароль.
-  const credentials = Buffer.from(token, 'base64').toString('utf-8');
-  const [username, password] = credentials.split(':');
+  try {
+    const credentials = Buffer.from(token, 'base64').toString('utf-8');
+    const [username, password] = credentials.split(':');
 
-  if (username !== ADMIN_USERNAME || password !== ADMIN_PASSWORD) {
+    if (username !== ADMIN_USERNAME || password !== ADMIN_PASSWORD) {
+      res.sendStatus(HttpStatus.Unauthorized);
+      return;
+    }
+
+    next();
+    
+  } catch (e: unknown) {
     res.sendStatus(HttpStatus.Unauthorized);
     return;
   }
-
-  next();
 };

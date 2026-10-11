@@ -9,13 +9,12 @@ export async function updatePostHandler(req: RequestWithParamsAndBody<{id:string
   try {  
     const isUpdated = await PostServices.updatePostService(req.params.id, req.body);  
     if (!isUpdated) {
-      res.status(HttpStatus.NotFound).send(
-        createErrorMessages([{ message: 'Not found', field: 'id' }])
-      );
+      res.sendStatus(HttpStatus.NotFound);
       return;
     }
     res.sendStatus(HttpStatus.NoContent);
-    }catch{
-        res.sendStatus(HttpStatus.InternalServerError)
+    }catch (e: unknown) {
+    console.log('🚨 ОШИБКА updatePostHandler:', e);
+    res.sendStatus(HttpStatus.InternalServerError);
   }
 }

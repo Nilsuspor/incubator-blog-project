@@ -34,7 +34,6 @@ export const blogsRepository = {
 
      const totalCount = await blogCollection.countDocuments(filter)
      return { items, totalCount };
-    //return blogCollection.find().toArray()
     },
     
     async getBlogById(id : string): Promise<WithId<Blog>|null>{

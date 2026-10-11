@@ -14,6 +14,8 @@ import { BlogSortFields } from "./input/blog-sort-field";
 import { sanitizeQueryParams } from "../../core/middlewares/validation/sanitize-query-middleware";
 import { getPostByBlogId } from "./handlers/get-posts-by-blog-id";
 import { PostSortFields } from "../../posts/routes/input/post-sort-fields";
+import { createPostforBlogHandler } from "./handlers/create-post-for-blog";
+import { postForBlogInputValidation } from "../../posts/validation/post.input-dto.validation-middlewares";
 
 export const blogsRouter = Router({})
 
@@ -44,6 +46,14 @@ export const blogsRouter = Router({})
       blogInputDtoValidation, 
       inputValidationResultMiddleware, 
       createBlogHandler);
+
+
+      blogsRouter.post(
+      BLOGS_ROUTES.BLOG_POSTS, 
+      superAdminGuardMiddleware,
+      postForBlogInputValidation,
+      inputValidationResultMiddleware, 
+      createPostforBlogHandler);
 
     blogsRouter.put(
       BLOGS_ROUTES.BY_ID,

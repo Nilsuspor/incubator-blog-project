@@ -7,6 +7,8 @@ import { testDelRouter } from "./tests/testing.del.router";
 import { BLOGS_PATH } from "./blogs/constants/blogs.path";
 import { POSTS_PATH } from "./posts/constants/posts.path";
 import { TESTING_PATH } from "./core/constants/testing.path";
+import { USERS_PATH } from "./users/constants/users.path";
+import { userRouter } from "./users/router/user-routes";
 
 export const setupApp = (app: Express) => {
   app.use(express.json()); // middleware для парсинга JSON в теле запроса
@@ -17,6 +19,7 @@ export const setupApp = (app: Express) => {
   });
   app.use(BLOGS_PATH, blogsRouter)
   app.use(POSTS_PATH, postsRouter)
+  app.use(USERS_PATH, userRouter)
   app.use (TESTING_PATH,testDelRouter)
 
   return app;

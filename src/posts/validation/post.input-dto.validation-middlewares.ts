@@ -27,12 +27,19 @@ const blogIdValidation = body('blogId')
     .isString()
     .withMessage('blogId should be string')
     .custom(async (value) => {
-  const blog = await blogsRepository.getBlogById(value);
-  if (!blog) {
-    throw new Error('Blog not found');
-  }
-  return true;
-})
+        try {
+            // 🔥 Оборачиваем запрос к БД в try/catch
+            const blog = await blogsRepository.getBlogById(value);
+            if (!blog) {
+                throw new Error('Blog not found'); // Это поймает express-validator, всё ок
+            }
+            return true;
+        } catch (error) {
+            // 🔥 Если MongoDB упала из-за кривого формата ID, мы просто говорим "не валидно",
+            // а не роняем сервер!
+            throw new Error('Blog not found or invalid ID format');
+        }
+    })
     .withMessage('Blog not found')
       
 
@@ -42,3 +49,10 @@ export const postInputDtoValidation = [
     contentValidation,
     blogIdValidation
 ]    
+
+export const postForBlogInputValidation = [
+  titleValidation,
+      shortDescriptionValidation,
+  contentValidation
+  // blogId здесь НЕ проверяем, мы возьмем его из URL
+];

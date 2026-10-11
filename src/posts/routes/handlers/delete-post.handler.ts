@@ -18,7 +18,8 @@ export async function deletePostHandler(
     }
 
     res.sendStatus(HttpStatus.NoContent); 
-  } catch (error) {
+  } catch (e: unknown) {
+    console.log('🚨 ОШИБКА deletePostHandler:', e);
     res.sendStatus(HttpStatus.InternalServerError);
   }
 }

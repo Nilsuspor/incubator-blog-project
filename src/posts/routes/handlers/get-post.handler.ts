@@ -10,14 +10,12 @@ export async function getPostHandler(req: RequestWithParams<{id:string}>, res: R
    try{
         const foundPost = await PostServices.getPostByIdService(req.params.id)
          if (!foundPost){
-            res.status(HttpStatus.NotFound)
-            .send(createErrorMessages([{message:'Post not found',field:'id'}])
-          )
+            res.sendStatus(HttpStatus.NotFound)
             return
           }
           res.status(HttpStatus.Ok).send(foundPost)
-   } catch{
-          res.sendStatus(HttpStatus.InternalServerError)
-
-   }
+   } catch (e: unknown) {
+    console.log('🚨 ОШИБКА getPostHandler:', e);
+    res.sendStatus(HttpStatus.InternalServerError);
+  }
 }
