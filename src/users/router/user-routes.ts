@@ -9,6 +9,7 @@ import { deleteUserHandler } from "./handlers/delete-user.handler";
 import { idValidation } from "../../core/middlewares/validation/params-id.validation.middleware";
 import { createUserHandler } from "./handlers/create-user-handler";
 import { superAdminGuardMiddleware } from "../../auth/middlewares/super_admin.guard.middleware";
+import { userInputDtoValidation } from "../validation/user.input-dto.validation-middlewares";
 
 export const userRouter = Router({})
 
@@ -22,6 +23,8 @@ userRouter.get(USERS_ROUTES.ROOT,
 
 userRouter.post(USERS_ROUTES.ROOT,
     superAdminGuardMiddleware,
+    userInputDtoValidation,
+    inputValidationResultMiddleware,
     createUserHandler
 )
 
