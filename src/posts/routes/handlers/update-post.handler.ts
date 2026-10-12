@@ -9,7 +9,7 @@ export async function updatePostHandler(req: RequestWithParamsAndBody<{id:string
   try {  
     const isUpdated = await PostServices.updatePostService(req.params.id, req.body);  
     if (!isUpdated) {
-      res.sendStatus(HttpStatus.NotFound);
+      res.sendStatus(404);
       return;
     }
     res.sendStatus(HttpStatus.NoContent);

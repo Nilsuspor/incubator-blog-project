@@ -65,4 +65,15 @@ describe('/posts', () => {
 
     expect(response.body.items).toHaveLength(0);
   });
+
+
+  it('❌ should not update post with PUT if unauthorized (no headers, empty body); PUT /posts/:id', async () => {
+    const fakePostId = '6acd29891416ffc3da0715d4'; // Тот самый ID из ошибки автотестера
+
+    await request(app)
+      .put(`/posts/${fakePostId}`)
+      // Специально НЕ вызываем .set('Authorization', ...) — заголовков нет
+      .send({}) // Пустое тело
+      .expect(HttpStatus.Unauthorized); // Ожидаем 401, а не падение сервера
+  });
 });

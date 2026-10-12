@@ -1,5 +1,7 @@
-const env = process.env;
+import dotenv from 'dotenv';
+dotenv.config(); // Читает .env и кладет его в process.env
 
+const env = process.env;
 // Логин и пароль супер-админа (можно переопределить переменными окружения).
 export const ADMIN_USERNAME = env.ADMIN_USERNAME || 'admin';
 export const ADMIN_PASSWORD = env.ADMIN_PASSWORD || 'qwerty';
