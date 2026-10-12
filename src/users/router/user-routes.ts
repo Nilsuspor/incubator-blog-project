@@ -5,16 +5,29 @@ import { UserSortFields } from "./input/user-sort-field";
 import { inputValidationResultMiddleware } from "../../core/middlewares/validation/input-validation-result.middleware";
 import { sanitizeQueryParams } from "../../core/middlewares/validation/sanitize-query-middleware";
 import { getUserListHandler } from "./handlers/get-user-list-handler";
+import { deleteUserHandler } from "./handlers/delete-user.handler";
+import { idValidation } from "../../core/middlewares/validation/params-id.validation.middleware";
+import { createUserHandler } from "./handlers/create-user-handler";
+import { superAdminGuardMiddleware } from "../../auth/middlewares/super_admin.guard.middleware";
 
 export const userRouter = Router({})
 
 userRouter.get(USERS_ROUTES.ROOT,
+    superAdminGuardMiddleware,
     paginationAndSortingValidation(UserSortFields),
     inputValidationResultMiddleware,
     sanitizeQueryParams,
     getUserListHandler
 )
 
-//userRouter.post(USERS_ROUTES.ROOT)
+userRouter.post(USERS_ROUTES.ROOT,
+    superAdminGuardMiddleware,
+    createUserHandler
+)
 
-//userRouter.delete(USERS_ROUTES.BY_ID)
+userRouter.delete(USERS_ROUTES.BY_ID,
+    superAdminGuardMiddleware,
+    idValidation,
+    inputValidationResultMiddleware,
+    deleteUserHandler
+)

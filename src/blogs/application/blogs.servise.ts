@@ -6,6 +6,8 @@ import { mapBlogInputDtoToBlog } from "../routes/mappers/map-blog-input-dto-to-b
 import { BlogQueryInput } from "../routes/input/blog-query.input";
 import { WithId } from "mongodb";
 import { Blog } from "../types/blogs";
+import { ValidationErrorDto } from "../../core/types/validation-error";
+
 
 export const BlogServices = {
     async findMany(queryDto: BlogQueryInput
