@@ -1,12 +1,15 @@
 import dotenv from 'dotenv';
-dotenv.config(); // Читает .env и кладет его в process.env
+import fs from 'fs'; // Импортируем встроенный модуль для работы с файлами
+
+// Проверяем: если файл .env существует в корне проекта, то читаем его
+if (fs.existsSync('.env')) {
+    dotenv.config();
+}
 
 const env = process.env;
 // Логин и пароль супер-админа (можно переопределить переменными окружения).
 export const ADMIN_USERNAME = env.ADMIN_USERNAME || 'admin';
 export const ADMIN_PASSWORD = env.ADMIN_PASSWORD || 'qwerty';
-
-
 
 export const SETTINGS = {
   PORT: env.PORT || 5001,
