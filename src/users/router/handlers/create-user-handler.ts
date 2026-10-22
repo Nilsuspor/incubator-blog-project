@@ -17,7 +17,7 @@ try{
             return;
         }
     
-    res.status(HttpStatus.Created).send( mapToUserViewModel(newUser))
+    res.status(HttpStatus.Created).send(newUser)
 
     }catch (e: unknown) {
         console.log('🚨 ОШИБКА СОЗДАНИЯ ЮЗЕРА:', e);

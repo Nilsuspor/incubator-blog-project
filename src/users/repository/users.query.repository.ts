@@ -1,4 +1,4 @@
-import { ObjectId, WithId } from "mongodb";
+import { ObjectId, WithId, Filter } from "mongodb";
 import { UserQueryInput } from "../router/input/user-query.input";
 import { User } from "../types/user";
 import { userCollection } from "../../db/collections";
@@ -20,7 +20,7 @@ export const userQueryRepository = {
       searchEmailTerm
         } = queryDto
        const skip = (pageNumber - 1) * pageSize;
-        const filter: any = {};
+        const filter: Filter<User> = {};
         const orConditions = []; 
 
 
@@ -35,25 +35,28 @@ export const userQueryRepository = {
         if (orConditions.length > 0) {
         filter.$or = orConditions;
 }
-     const items = await userCollection
-     .find(filter)
-     .sort({[sortBy]:sortDirection})
-     .skip(skip)
-     .limit(pageSize)
-     .toArray();
-        
-     const totalCount = await userCollection.countDocuments(filter)
+     const [items, totalCount] = await Promise.all([
+                 userCollection.find(filter)
+                 .sort({[sortBy]: sortDirection})
+                 .skip(skip).limit(pageSize)
+                 .toArray(), 
+                 userCollection.countDocuments(filter)
+             ] );
      const mappedUsers = items.map(user =>mapToUserViewModel(user))
     return {mappedUsers, totalCount}
     },
 
 
-    async findById(id:string):Promise<WithId<User>|null>{
+    async findById(id:string):Promise<UserViewModel|null>{
         if (!ObjectId.isValid(id)) {
             return null; 
         }
         const foundUser = await userCollection.findOne({ _id: new ObjectId(id) })
-        return foundUser
+        if (!foundUser){
+            return null
+        }
+        const mappedUser = mapToUserViewModel(foundUser)
+        return mappedUser
     },
 
     async findByLoginOrEmail(login:string, email:string,):Promise<WithId<User>|null>{

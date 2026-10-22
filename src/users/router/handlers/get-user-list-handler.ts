@@ -1,8 +1,6 @@
 import { Request, Response } from "express";
 import { HttpStatus } from "../../../core/types/http-statuses";
 import { UserQueryInput } from "../input/user-query.input";
-import { UserServices } from "../../application/user.service";
-import { mapToUserViewModel } from "../../repository/mappers/map-to-user-view-model-unit";
 import { buildUserPagination } from "../output/user-list-paginated-output";
 import { userQueryRepository } from "../../repository/users.query.repository";
 

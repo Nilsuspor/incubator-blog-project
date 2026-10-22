@@ -1,5 +1,5 @@
 import { Post } from "../types/posts";
-import { ObjectId, WithId } from "mongodb";
+import { ObjectId, Filter } from "mongodb";
 import { postCollection } from "../../db/collections";
 import { PostQueryInput } from "../routes/input/post-query.input";
 import { mapToPostViewModel } from "../routes/mappers/map-to post-view-model.util";
@@ -15,7 +15,7 @@ export const postQueryRepository = {
       sortBy,
       sortDirection,
      } = queryDto
-     const filter: any = {};
+     const filter: Filter<Post> = {};
         if (blogId) {
             filter.blogId = blogId; 
         }
@@ -23,15 +23,15 @@ export const postQueryRepository = {
      const skip = (pageNumber - 1) * pageSize;
      
      
-     const items = await postCollection
-          .find(filter)
-          .sort({[sortBy]:sortDirection})
-          .skip(skip)
-          .limit(pageSize)
-          .toArray();
+      const [items, totalCount] = await Promise.all([
+                 postCollection.find(filter)
+                 .sort({[sortBy]: sortDirection})
+                 .skip(skip).limit(pageSize)
+                 .toArray(), 
+                 postCollection.countDocuments(filter)
+             ] );
 
     const mappedPosts = items.map(post => mapToPostViewModel(post))
-    const totalCount = await postCollection.countDocuments(filter)
          return { mappedPosts, totalCount };   
         
     },

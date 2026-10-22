@@ -17,7 +17,6 @@ export async function getBlogHandler(req: RequestWithParams<{id:string}>, res: R
       )
         return
       }
-  
     res.status(HttpStatus.Ok).send(foundBlog)
 
   }  catch {

@@ -1,8 +1,6 @@
 import { UserInputDto } from "../dto/user.input.dto";
 import { userRepository } from "../repository/user.repository";
-import { UserQueryInput } from "../router/input/user-query.input";
 import { User } from "../types/user";
-import { WithId } from "mongodb";
 import { bcryptService } from "../../auth/adapters/bcrypt.service";
 import { ValidationErrorDto } from "../../core/types/validation-error";
 import { userQueryRepository } from "../repository/users.query.repository";
@@ -24,9 +22,6 @@ export const UserServices = {
         };
       }
     }
-    
-
-
         const {login, password, email} = dto
          const passwordHash = await bcryptService.generateHash(password);
 

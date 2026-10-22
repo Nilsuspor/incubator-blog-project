@@ -4,8 +4,6 @@ import { postRepository } from "../repository/post.repository"
 import { mapToPostViewModel } from "../routes/mappers/map-to post-view-model.util"
 import { mapPostInputDtoToPost } from "../routes/mappers/map-post-input-dto-to-post.util"
 import { blogsQueryRepository } from "../../blogs/repository/blog.query.repository"
-import { postQueryRepository } from "../repository/post.query.repository"
-
 
 export const PostServices = {
 
