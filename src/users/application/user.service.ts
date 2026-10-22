@@ -5,18 +5,13 @@ import { User } from "../types/user";
 import { WithId } from "mongodb";
 import { bcryptService } from "../../auth/adapters/bcrypt.service";
 import { ValidationErrorDto } from "../../core/types/validation-error";
-
+import { userQueryRepository } from "../repository/users.query.repository";
 
 export const UserServices = {
 
-    async findMany(queryDto:UserQueryInput
-            ):Promise<{items:WithId<User>[]; totalCount: number}>{
-                
-                return userRepository.findMany(queryDto)
-            },
     
     async create(dto: UserInputDto):Promise<string|ValidationErrorDto>{
-        const existingUser = await userRepository.findByLoginOrEmail(dto.login, dto.email);
+        const existingUser = await userQueryRepository.findByLoginOrEmail(dto.login, dto.email);
         if (existingUser) {
       if (existingUser.email === dto.email) {
         return {

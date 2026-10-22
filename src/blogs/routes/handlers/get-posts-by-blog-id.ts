@@ -1,30 +1,25 @@
 import { Request, Response } from "express";
-import { createErrorMessages } from "../../../core/middlewares/validation/input-validation-result.middleware";
 import { HttpStatus } from "../../../core/types/http-statuses";
 import { RequestWithParams } from "../../../core/types/request_types";
-import { BlogServices } from "../../application/blogs.servise";
 import { PostQueryInput } from "../../../posts/routes/input/post-query.input";
-import { PostServices } from "../../../posts/application/post.servise";
-import { mapToPostViewModel } from "../../../posts/routes/mappers/map-to post-view-model.util";
 import { buildPostPagination } from "../../../posts/routes/output/post-list-paginated.uotput";
+import { blogsQueryRepository } from "../../repository/blog.query.repository";
+import { postQueryRepository } from "../../../posts/repository/post.query.repository";
 
 export async function getPostByBlogId(req: RequestWithParams<{id:string}>, res: Response){
     try{
         const blogId = req.params.id;
-        const foundBlog = await BlogServices.getBlogByIdService(blogId)
+        const foundBlog = await blogsQueryRepository.findById(blogId)
              if (!foundBlog){
                 res.sendStatus(HttpStatus.NotFound)
-                
-              
                 return
               }
-
         const queryInput = req.query as unknown as PostQueryInput;      
-        const { items, totalCount } = await PostServices.findMany(queryInput, blogId);      
+        const { mappedPosts, totalCount } = await postQueryRepository.findMany(queryInput, blogId);      
         
-        const mapperdPosts = items.map(post=>mapToPostViewModel(post))
+      
         const response = buildPostPagination(
-            mapperdPosts,
+            mappedPosts,
             totalCount,
             queryInput.pageNumber,
             queryInput.pageSize

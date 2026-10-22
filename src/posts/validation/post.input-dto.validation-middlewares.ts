@@ -1,5 +1,5 @@
 import {body} from 'express-validator'
-import { blogsRepository } from '../../blogs/repository/blog.repository'
+import { blogsQueryRepository } from '../../blogs/repository/blog.query.repository' 
 
 const titleValidation = body('title')
 .isString()
@@ -28,15 +28,12 @@ const blogIdValidation = body('blogId')
     .withMessage('blogId should be string')
     .custom(async (value) => {
         try {
-            // 🔥 Оборачиваем запрос к БД в try/catch
-            const blog = await blogsRepository.getBlogById(value);
+            const blog = await blogsQueryRepository.findById(value);
             if (!blog) {
-                throw new Error('Blog not found'); // Это поймает express-validator, всё ок
+                throw new Error('Blog not found'); 
             }
             return true;
         } catch (error) {
-            // 🔥 Если MongoDB упала из-за кривого формата ID, мы просто говорим "не валидно",
-            // а не роняем сервер!
             throw new Error('Blog not found or invalid ID format');
         }
     })

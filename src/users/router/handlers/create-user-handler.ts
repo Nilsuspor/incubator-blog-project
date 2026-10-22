@@ -1,9 +1,8 @@
 import { Request,Response } from "express";
 import { UserServices } from "../../application/user.service";
 import { HttpStatus } from "../../../core/types/http-statuses";
-import { userRepository } from "../../repository/user.repository";
 import { mapToUserViewModel } from "../../repository/mappers/map-to-user-view-model-unit";
-
+import { userQueryRepository } from "../../repository/users.query.repository";
 
 export async function createUserHandler(req:Request, res: Response) {
 try{
@@ -12,7 +11,7 @@ try{
             res.status(HttpStatus.BadRequest).send(result);
             return; 
         }
-    const newUser = await userRepository.findById(result)
+    const newUser = await userQueryRepository.findById(result)
     if (!newUser) {
             res.sendStatus(HttpStatus.InternalServerError);
             return;

@@ -5,10 +5,11 @@ import { PostViewModel } from "../../dto/post.view.model";
 import { ValidationErrorDto } from "../../../core/types/validation-error";
 import { createErrorMessages } from "../../../core/middlewares/validation/input-validation-result.middleware";
 import { PostServices } from "../../application/post.servise";
+import { postQueryRepository } from "../../repository/post.query.repository";
 
 export async function getPostHandler(req: RequestWithParams<{id:string}>, res: Response<PostViewModel| ValidationErrorDto >){
    try{
-        const foundPost = await PostServices.getPostByIdService(req.params.id)
+        const foundPost = await postQueryRepository.getPostById(req.params.id)
          if (!foundPost){
             res.sendStatus(HttpStatus.NotFound)
             return

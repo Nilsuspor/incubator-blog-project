@@ -3,27 +3,8 @@ import { mapToBlogViewModel } from "../routes/mappers/map-to-blog-view-model.uti
 import { BlogViewModel } from "../dto/blog.view.model";
 import { BlogInputDto } from "../dto/blog.input.dto";
 import { mapBlogInputDtoToBlog } from "../routes/mappers/map-blog-input-dto-to-blog.util";
-import { BlogQueryInput } from "../routes/input/blog-query.input";
-import { WithId } from "mongodb";
-import { Blog } from "../types/blogs";
-import { ValidationErrorDto } from "../../core/types/validation-error";
-
 
 export const BlogServices = {
-    async findMany(queryDto: BlogQueryInput
-    ): Promise<{items:WithId<Blog>[]; totalCount: number}>{
-               
-        return blogsRepository.findMany(queryDto)
-        },
-
-
-    async getBlogByIdService(id:string): Promise<BlogViewModel|null>{
-        const foundBlog = await blogsRepository.getBlogById(id)
-        if (!foundBlog){
-            return null
-        }
-        return mapToBlogViewModel(foundBlog)
-    },
 
     async createBlogService(blog: BlogInputDto): Promise<BlogViewModel>{
          const newBlog = {
