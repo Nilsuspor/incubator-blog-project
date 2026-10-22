@@ -4,6 +4,8 @@ import { ObjectId, Filter } from "mongodb";
 import { BlogQueryInput } from "../routes/input/blog-query.input";
 import { mapToBlogViewModel } from "../routes/mappers/map-to-blog-view-model.util";
 import { BlogViewModel } from "../dto/blog.view.model";
+import { NotFoundException } from "../../core/exceptions/not-found.exception";
+
 export const blogsQueryRepository = {
 
       async findMany(queryDto:BlogQueryInput
@@ -46,5 +48,15 @@ export const blogsQueryRepository = {
           }
            return mapToBlogViewModel(foundBlog)
         },
+
+        async findByIdOrFail(id: string): Promise<BlogViewModel> {
+          const foundBlog = await this.findById(id);
+
+          if (!foundBlog) {
+            throw new NotFoundException('Blog not found');
+        }
+
+          return foundBlog;
+        }
     
 }

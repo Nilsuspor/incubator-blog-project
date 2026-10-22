@@ -1,22 +1,19 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import { HttpStatus } from "../../../core/types/http-statuses";
 import { RequestWithParams } from "../../../core/types/request_types";
 import { PostViewModel } from "../../dto/post.view.model";
-import { ValidationErrorDto } from "../../../core/types/validation-error";
-import { createErrorMessages } from "../../../core/middlewares/validation/input-validation-result.middleware";
-import { PostServices } from "../../application/post.servise";
+import { errorsHandler } from "../../../core/exceptions/errors-handler";
 import { postQueryRepository } from "../../repository/post.query.repository";
 
-export async function getPostHandler(req: RequestWithParams<{id:string}>, res: Response<PostViewModel| ValidationErrorDto >){
+export async function getPostHandler(
+  req: RequestWithParams<{id:string}>,
+  res: Response<PostViewModel>
+){
    try{
-        const foundPost = await postQueryRepository.getPostById(req.params.id)
-         if (!foundPost){
-            res.sendStatus(HttpStatus.NotFound)
-            return
-          }
-          res.status(HttpStatus.Ok).send(foundPost)
+        const foundPost = await postQueryRepository.findByIdOrFail(req.params.id)
+         res.status(HttpStatus.Ok).send(foundPost);
+        
    } catch (e: unknown) {
-    console.log('🚨 ОШИБКА getPostHandler:', e);
-    res.sendStatus(HttpStatus.InternalServerError);
+    errorsHandler(e, res);
   }
 }

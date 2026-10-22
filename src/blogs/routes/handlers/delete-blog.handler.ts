@@ -1,27 +1,16 @@
 import { RequestWithParams } from "../../../core/types/request_types";
-import { blogsRepository } from "../../repository/blog.repository";
-import { Request, Response } from "express";
+import {  Response } from "express";
 import { HttpStatus } from "../../../core/types/http-statuses";
-import { postRepository } from "../../../posts/repository/post.repository";
-import { createErrorMessages } from "../../../core/middlewares/validation/input-validation-result.middleware";
-import { generateBasicAuthToken } from "../../../__tests__/utils/generate-admin-auth-token";
 import { BlogServices } from "../../application/blogs.servise";
+import { errorsHandler } from "../../../core/exceptions/errors-handler";
 
 export async function deleteBlogHandler (req: RequestWithParams<{id:string}>,
     res: Response){
    try{
            
-           const isBlogDeleted = await BlogServices.deleteBlogService(req.params.id)
-               if (!isBlogDeleted){
-           res.status(HttpStatus.NotFound)
-           .send(createErrorMessages([{message:'Blog not found',field:'id'}])
-         )
-           return
-       }
-        //await blogsRepository.deleteBlog(id)
-        //await postRepository.deletePostsByBlogId(id)
+        const isBlogDeleted = await BlogServices.deleteBlogService(req.params.id)
         res.sendStatus(HttpStatus.NoContent)
-       }catch{
-          res.sendStatus(HttpStatus.InternalServerError)
+       }catch (e: unknown) {
+               errorsHandler(e, res);
        }
 }

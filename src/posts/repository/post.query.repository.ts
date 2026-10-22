@@ -4,6 +4,7 @@ import { postCollection } from "../../db/collections";
 import { PostQueryInput } from "../routes/input/post-query.input";
 import { mapToPostViewModel } from "../routes/mappers/map-to post-view-model.util";
 import { PostViewModel } from "../dto/post.view.model";
+import { NotFoundException } from "../../core/exceptions/not-found.exception";
 
 export const postQueryRepository = {
      
@@ -36,11 +37,21 @@ export const postQueryRepository = {
         
     },
 
-    async getPostById(id : string): Promise<PostViewModel|null>{
+    async findById(id : string): Promise<PostViewModel|null>{
       const foundPost = await postCollection.findOne({_id:new ObjectId(id)})
       if (!foundPost) {
          return null
       }
        return mapToPostViewModel(foundPost)
     },
+
+    async findByIdOrFail(id: string): Promise<PostViewModel> {
+              const foundPost = await this.findById(id);
+    
+              if (!foundPost) {
+                throw new NotFoundException('Blog not found');
+            }
+    
+              return foundPost;
+            }
 }

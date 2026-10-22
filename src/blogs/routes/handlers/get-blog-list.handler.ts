@@ -3,6 +3,7 @@ import { HttpStatus } from "../../../core/types/http-statuses";
 import { BlogQueryInput } from "../input/blog-query.input";
 import { buildBlogPagination } from "../output/blog-list-paginated.output";
 import { blogsQueryRepository } from "../../repository/blog.query.repository";
+import { errorsHandler } from "../../../core/exceptions/errors-handler";
 
 export async function getBlogListHandler(req: Request, res: Response){
 
@@ -20,9 +21,8 @@ try {
    )
    res.status(HttpStatus.Ok).send(response)
 }
-catch (e: unknown) { 
-   console.log('🚨 ОШИБКА В ХЕНДЛЕРЕ БЛОГОВ:', e); 
-   res.sendStatus(HttpStatus.InternalServerError);
+catch (e: unknown) {
+      errorsHandler(e, res);
 }
   
 }

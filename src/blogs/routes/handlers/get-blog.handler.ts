@@ -1,29 +1,20 @@
-import { Request, Response } from "express";
+import {  Response } from "express";
 import { HttpStatus } from "../../../core/types/http-statuses";
 import { RequestWithParams } from "../../../core/types/request_types";
 import { BlogViewModel } from "../../dto/blog.view.model";
-import { createErrorMessages } from "../../../core/middlewares/validation/input-validation-result.middleware";
-import { ValidationErrorDto } from "../../../core/types/validation-error";
 import { blogsQueryRepository } from "../../repository/blog.query.repository";
+import { errorsHandler } from "../../../core/exceptions/errors-handler";
 
 
-
-export async function getBlogHandler(req: RequestWithParams<{id:string}>, res: Response<BlogViewModel | ValidationErrorDto>){
+export async function getBlogHandler(
+  req: RequestWithParams<{id: string}>, 
+  res: Response<BlogViewModel>
+) {
   try {
-    const foundBlog = await blogsQueryRepository.findById(req.params.id)
-     if (!foundBlog){
-        res.status(HttpStatus.NotFound)
-        .send(createErrorMessages([{message:'Blog not found',field:'id'}])
-      )
-        return
-      }
-    res.status(HttpStatus.Ok).send(foundBlog)
-
-  }  catch {
-    res.sendStatus(HttpStatus.InternalServerError)
+    const foundBlog = await blogsQueryRepository.findByIdOrFail(req.params.id);
+    res.status(HttpStatus.Ok).send(foundBlog);
+    
+  } catch (e: unknown) {
+    errorsHandler(e, res);
   }
-
- 
-      
-     
 }

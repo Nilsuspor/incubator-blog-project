@@ -17,13 +17,13 @@ export const BlogServices = {
         return mapToBlogViewModel(createdBlog) 
         },
         
-    async updateBlogService(id:string, body: BlogInputDto): Promise<boolean>{
-        const isUpdated = await blogsRepository.updateBlog(id, mapBlogInputDtoToBlog(body))
-        return isUpdated;
+    async updateBlogService(id:string, body: BlogInputDto): Promise<void>{
+        await blogsRepository.updateBlog(id, mapBlogInputDtoToBlog(body))
+        return
     },
     
-    async deleteBlogService(id:string):Promise<boolean>{
-        const isDeleted = await blogsRepository.deleteBlog(id)
-        return isDeleted
+    async deleteBlogService(id:string):Promise<void>{
+        await blogsRepository.deleteBlog(id)
+        return 
     }
 }

@@ -4,25 +4,23 @@ import { postRepository } from "../repository/post.repository"
 import { mapToPostViewModel } from "../routes/mappers/map-to post-view-model.util"
 import { mapPostInputDtoToPost } from "../routes/mappers/map-post-input-dto-to-post.util"
 import { blogsQueryRepository } from "../../blogs/repository/blog.query.repository"
-
+import { NotFoundException } from "../../core/exceptions/not-found.exception"
 export const PostServices = {
 
     
         
-    async createPostService(blogId: string, post:PostInputDto):Promise<PostViewModel|null>{
+    async createPostService(blogId: string, post:PostInputDto):Promise<string>{
         const foundBlog = await blogsQueryRepository.findById(blogId)
-        if (!foundBlog){
-            return null
-        }
-        const newPost = {
-                ...mapPostInputDtoToPost(post),
-                blogId: blogId,
-                createdAt: new Date().toISOString(),
-                blogName: foundBlog.name
-              }
-        const createdPost = await postRepository.createPost(newPost)
-      
-        return mapToPostViewModel(createdPost)
+       if (!foundBlog) throw new NotFoundException('Blog not found');
+
+    const newPost = {
+        ...mapPostInputDtoToPost(post),
+        blogId: blogId,
+        createdAt: new Date().toISOString(),
+        blogName: foundBlog.name
+    };
+    const createdPostId = await postRepository.createPost(newPost);
+    return createdPostId;
     } ,   
 
     async updatePostService(id:string, body: PostInputDto): Promise<boolean>{

@@ -2,11 +2,12 @@
 import { Post } from "../types/posts";
 import { ObjectId, WithId } from "mongodb";
 import { postCollection } from "../../db/collections";
+import { mapToPostViewModel } from "../routes/mappers/map-to post-view-model.util";
 
 export const postRepository = {
-    async createPost(newPost :Post):Promise<WithId<Post>>{
-         const insertResult = await postCollection.insertOne(newPost)
-         return {...newPost, _id:insertResult.insertedId}
+    async createPost(newPost: Post): Promise<string> {
+        const insertResult = await postCollection.insertOne(newPost);
+        return insertResult.insertedId.toString();
 
     },
 
