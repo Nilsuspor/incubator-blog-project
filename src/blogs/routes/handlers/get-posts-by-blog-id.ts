@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import { HttpStatus } from "../../../core/types/http-statuses";
 import { RequestWithParams } from "../../../core/types/request_types";
 import { PostQueryInput } from "../../../posts/routes/input/post-query.input";

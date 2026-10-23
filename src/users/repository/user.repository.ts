@@ -1,11 +1,10 @@
-import { ObjectId, WithId } from "mongodb";
-import { UserQueryInput } from "../router/input/user-query.input";
+import { ObjectId, WithId} from "mongodb";
 import { User } from "../types/user";
 import { userCollection } from "../../db/collections";
+import { NotFoundException } from "../../core/exceptions/not-found.exception";
+
 
 export const userRepository = {
-
-   
 
     async create(newUser: User):Promise<string>{
         const insertResult = await userCollection.insertOne(newUser)  
@@ -14,9 +13,18 @@ export const userRepository = {
 
    
 
-    async deleteById(id: string):Promise<boolean>{
+    async deleteById(id: string):Promise<void>{
       const deleteResult = await userCollection.deleteOne({ _id: new ObjectId(id)})
-        return deleteResult.deletedCount > 0;
+       if (deleteResult.deletedCount < 1) {
+               throw new NotFoundException('User not found');
+           }
 
+    },
+
+    async findByLoginOrEmail(login:string, email:string,):Promise<WithId<User>|null>{
+        const foundUser = await userCollection.findOne({
+      $or: [{ email: email }, { login: login }],
+    })
+        return foundUser
     },
 }

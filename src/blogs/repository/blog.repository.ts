@@ -31,7 +31,11 @@ export const blogsRepository = {
       if (deleteResult.deletedCount < 1) {
         throw new NotFoundException('Blog not found');
     }
-    }
+    },
 
+    async findById(id: string): Promise<Blog|null> {
+    const foundBlog = await blogCollection.findOne({ _id: new ObjectId(id) });
+    return foundBlog; 
+  }
 
 }

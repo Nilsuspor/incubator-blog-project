@@ -1,28 +1,16 @@
 import { Request,Response } from "express";
 import { UserServices } from "../../application/user.service";
 import { HttpStatus } from "../../../core/types/http-statuses";
-import { mapToUserViewModel } from "../../repository/mappers/map-to-user-view-model-unit";
 import { userQueryRepository } from "../../repository/users.query.repository";
+import { errorsHandler } from "../../../core/exceptions/errors-handler";
 
 export async function createUserHandler(req:Request, res: Response) {
 try{
     const result = await UserServices.create(req.body);
-    if (typeof result !== 'string' && 'errorsMessages' in result) {
-            res.status(HttpStatus.BadRequest).send(result);
-            return; 
-        }
-    const newUser = await userQueryRepository.findById(result)
-    if (!newUser) {
-            res.sendStatus(HttpStatus.InternalServerError);
-            return;
-        }
-    
+    const newUser = await userQueryRepository.findByIdOrFail(result)
     res.status(HttpStatus.Created).send(newUser)
 
     }catch (e: unknown) {
-        console.log('🚨 ОШИБКА СОЗДАНИЯ ЮЗЕРА:', e);
-        res.sendStatus(HttpStatus.InternalServerError);
-
+        errorsHandler(e, res);
     }
-    
 }

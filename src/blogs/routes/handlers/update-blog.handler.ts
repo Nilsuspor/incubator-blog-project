@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import { HttpStatus } from "../../../core/types/http-statuses";
 import { RequestWithParamsAndBody } from "../../../core/types/request_types";
 import { BlogInputDto } from "../../dto/blog.input.dto";

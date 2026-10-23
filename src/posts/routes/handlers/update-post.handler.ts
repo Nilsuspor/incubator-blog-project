@@ -1,20 +1,15 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import { HttpStatus } from "../../../core/types/http-statuses";
 import { RequestWithParamsAndBody } from "../../../core/types/request_types";
 import { PostInputDto } from "../../dto/post.input.dto";
-import { createErrorMessages } from "../../../core/middlewares/validation/input-validation-result.middleware";
 import { PostServices } from "../../application/post.servise";
+import { errorsHandler } from "../../../core/exceptions/errors-handler";
 
 export async function updatePostHandler(req: RequestWithParamsAndBody<{id:string},PostInputDto>, res: Response){
   try {  
-    const isUpdated = await PostServices.updatePostService(req.params.id, req.body);  
-    if (!isUpdated) {
-      res.sendStatus(404);
-      return;
-    }
+    await PostServices.updatePostService(req.params.id, req.body);  
     res.sendStatus(HttpStatus.NoContent);
     }catch (e: unknown) {
-    console.log('🚨 ОШИБКА updatePostHandler:', e);
-    res.sendStatus(HttpStatus.InternalServerError);
+                errorsHandler(e, res);
   }
 }

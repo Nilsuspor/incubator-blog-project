@@ -11,7 +11,6 @@ export const blogsQueryRepository = {
       async findMany(queryDto:BlogQueryInput
     
       ): Promise<{mappedItems:BlogViewModel[]; totalCount: number}>{
-         
         const {
           pageNumber,
           pageSize,
@@ -39,7 +38,6 @@ export const blogsQueryRepository = {
         },
         
 
-
         async findById(id : string): Promise<BlogViewModel|null>{
 
           const foundBlog = await blogCollection.findOne({_id:new ObjectId(id)})
@@ -48,6 +46,7 @@ export const blogsQueryRepository = {
           }
            return mapToBlogViewModel(foundBlog)
         },
+
 
         async findByIdOrFail(id: string): Promise<BlogViewModel> {
           const foundBlog = await this.findById(id);

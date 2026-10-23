@@ -1,25 +1,17 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import { HttpStatus } from "../../../core/types/http-statuses";
-import { postRepository } from "../../repository/post.repository";
 import { RequestWithParams } from "../../../core/types/request_types";
-import { createErrorMessages } from "../../../core/middlewares/validation/input-validation-result.middleware";
 import { PostServices } from "../../application/post.servise";
+import { errorsHandler } from "../../../core/exceptions/errors-handler";
 
 export async function deletePostHandler(
   req: RequestWithParams<{ id: string }>,
   res: Response,
 ) {
   try {
-    const isDeleted = await PostServices.deletePostService(req.params.id);
-
-    if (!isDeleted) {
-      res.sendStatus(HttpStatus.NotFound); 
-      return;
-    }
-
+    await PostServices.deletePostService(req.params.id);
     res.sendStatus(HttpStatus.NoContent); 
   } catch (e: unknown) {
-    console.log('🚨 ОШИБКА deletePostHandler:', e);
-    res.sendStatus(HttpStatus.InternalServerError);
+              errorsHandler(e, res);
   }
 }

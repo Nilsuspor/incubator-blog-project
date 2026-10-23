@@ -3,6 +3,8 @@ import { HttpStatus } from "../../../core/types/http-statuses";
 import { PostQueryInput } from "../input/post-query.input";
 import { buildPostPagination } from "../output/post-list-paginated.uotput";
 import { postQueryRepository } from "../../repository/post.query.repository";
+import { errorsHandler } from "../../../core/exceptions/errors-handler";
+
 export async function  getPostListHandler(req: Request, res: Response){
     try{
        const queryInput = req.query as unknown as PostQueryInput;
@@ -15,9 +17,8 @@ export async function  getPostListHandler(req: Request, res: Response){
             queryInput.pageSize
         )
         res.status(HttpStatus.Ok).send(response)
-    } catch (e: unknown) { 
-   console.log('🚨 ОШИБКА В ХЕНДЛЕРЕ Постов:', e); 
-   res.sendStatus(HttpStatus.InternalServerError);
+    } catch (e: unknown) {
+          errorsHandler(e, res);
   
     }
 }

@@ -1,9 +1,10 @@
-import { ObjectId, WithId, Filter } from "mongodb";
+import { ObjectId, Filter } from "mongodb";
 import { UserQueryInput } from "../router/input/user-query.input";
 import { User } from "../types/user";
 import { userCollection } from "../../db/collections";
 import { mapToUserViewModel } from "./mappers/map-to-user-view-model-unit";
 import { UserViewModel } from "../dto/user.view.model";
+import { NotFoundException } from "../../core/exceptions/not-found.exception";
 
 
 export const userQueryRepository = {
@@ -59,10 +60,13 @@ export const userQueryRepository = {
         return mappedUser
     },
 
-    async findByLoginOrEmail(login:string, email:string,):Promise<WithId<User>|null>{
-        const foundUser = await userCollection.findOne({
-      $or: [{ email: email }, { login: login }],
-    })
+    async findByIdOrFail(id:string):Promise<UserViewModel>{
+        const foundUser = await this.findById(id)
+
+        if(!foundUser){
+            throw new NotFoundException('User not found')
+        }
         return foundUser
-    },
+    }    
+    
 }    

@@ -1,8 +1,8 @@
 
 import { Post } from "../types/posts";
-import { ObjectId, WithId } from "mongodb";
+import { ObjectId } from "mongodb";
 import { postCollection } from "../../db/collections";
-import { mapToPostViewModel } from "../routes/mappers/map-to post-view-model.util";
+import { NotFoundException } from "../../core/exceptions/not-found.exception";
 
 export const postRepository = {
     async createPost(newPost: Post): Promise<string> {
@@ -19,12 +19,13 @@ export const postRepository = {
         return updateResult.matchedCount>0
     },
 
-     async deletePost(id: string): Promise<boolean> {
+     async deletePost(id: string): Promise<void> {
   const deleteResult = await postCollection.deleteOne({
     _id: new ObjectId(id),
   });
-
-  return deleteResult.deletedCount > 0;
+ if (deleteResult.deletedCount < 1) {
+               throw new NotFoundException('Post not found');
+           }
 },
 
    async deletePostsByBlogId(blogId: string) {
@@ -32,5 +33,7 @@ export const postRepository = {
     
     return 
     }
+
+    
 
 }

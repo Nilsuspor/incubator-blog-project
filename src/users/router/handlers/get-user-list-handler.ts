@@ -3,7 +3,7 @@ import { HttpStatus } from "../../../core/types/http-statuses";
 import { UserQueryInput } from "../input/user-query.input";
 import { buildUserPagination } from "../output/user-list-paginated-output";
 import { userQueryRepository } from "../../repository/users.query.repository";
-
+import { errorsHandler } from "../../../core/exceptions/errors-handler";
 
 export async function getUserListHandler(req: Request, res: Response) {
     try {
@@ -19,9 +19,8 @@ export async function getUserListHandler(req: Request, res: Response) {
         
     res.status(HttpStatus.Ok).send(response)
 }
-catch (e: unknown) { 
-   console.log('🚨 ОШИБКА В ХЕНДЛЕРЕ БЛОГОВ:', e); 
-   res.sendStatus(HttpStatus.InternalServerError);
+catch (e: unknown) {
+      errorsHandler(e, res);
 }
 
 }
