@@ -12,7 +12,7 @@ import { superAdminGuardMiddleware } from "../../auth/middlewares/super_admin.gu
 import { paginationAndSortingValidation } from "../../core/middlewares/validation/query-pagination-sorting.validation.middleware";
 import { PostSortFields } from "./input/post-sort-fields";
 import { sanitizeQueryParams } from "../../core/middlewares/validation/sanitize-query-middleware";
-
+import { use } from "../../core/utils/express-utils";
 
 export const postsRouter = Router({})
 
@@ -21,7 +21,7 @@ export const postsRouter = Router({})
         paginationAndSortingValidation(PostSortFields),
         inputValidationResultMiddleware,
         sanitizeQueryParams,    
-        getPostListHandler);
+        use(getPostListHandler));
 
     postsRouter.get(
         POSTS_ROUTES.BY_ID,

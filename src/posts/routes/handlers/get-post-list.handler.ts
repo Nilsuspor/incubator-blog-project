@@ -4,10 +4,11 @@ import { PostQueryInput } from "../input/post-query.input";
 import { buildPostPagination } from "../output/post-list-paginated.uotput";
 import { postQueryRepository } from "../../repository/post.query.repository";
 import { errorsHandler } from "../../../core/exceptions/errors-handler";
+import { RequestWithQuery } from "../../../core/types/request_types";
 
-export async function  getPostListHandler(req: Request, res: Response){
+export async function  getPostListHandler(req: RequestWithQuery<PostQueryInput>, res: Response){
     try{
-       const queryInput = req.query as unknown as PostQueryInput;
+       const queryInput = req.query;
         const {mappedPosts, totalCount} = await postQueryRepository.findMany(queryInput)
         
         const response = buildPostPagination(

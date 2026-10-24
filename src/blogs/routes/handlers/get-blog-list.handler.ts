@@ -4,15 +4,13 @@ import { BlogQueryInput } from "../input/blog-query.input";
 import { buildBlogPagination } from "../output/blog-list-paginated.output";
 import { blogsQueryRepository } from "../../repository/blog.query.repository";
 import { errorsHandler } from "../../../core/exceptions/errors-handler";
+import { RequestWithQuery } from "../../../core/types/request_types";
 
-export async function getBlogListHandler(req: Request, res: Response){
+export async function getBlogListHandler(req: RequestWithQuery<BlogQueryInput>, res: Response){
 
 try {
-   const queryInput = req.query as unknown as BlogQueryInput;
-
+   const queryInput = req.query 
    const {mappedItems, totalCount} = await blogsQueryRepository.findMany(queryInput)
-
-
    const response = buildBlogPagination(
       mappedItems,
       totalCount,

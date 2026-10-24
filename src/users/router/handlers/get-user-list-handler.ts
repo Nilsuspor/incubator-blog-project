@@ -4,10 +4,11 @@ import { UserQueryInput } from "../input/user-query.input";
 import { buildUserPagination } from "../output/user-list-paginated-output";
 import { userQueryRepository } from "../../repository/users.query.repository";
 import { errorsHandler } from "../../../core/exceptions/errors-handler";
+import { RequestWithQuery } from "../../../core/types/request_types";
 
-export async function getUserListHandler(req: Request, res: Response) {
+export async function getUserListHandler(req: RequestWithQuery<UserQueryInput>, res: Response) {
     try {
-        const queryInput = req.query as unknown as UserQueryInput
+        const queryInput = req.query
         const {mappedUsers, totalCount} = await userQueryRepository.findMany(queryInput)
 
         const response = buildUserPagination(

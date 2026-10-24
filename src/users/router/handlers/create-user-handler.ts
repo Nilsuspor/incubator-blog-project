@@ -1,14 +1,17 @@
-import { Request,Response } from "express";
+import { Response } from "express";
 import { UserServices } from "../../application/user.service";
 import { HttpStatus } from "../../../core/types/http-statuses";
 import { userQueryRepository } from "../../repository/users.query.repository";
 import { errorsHandler } from "../../../core/exceptions/errors-handler";
+import { RequestWithBody } from "../../../core/types/request_types";
+import { UserInputDto } from "../../dto/user.input.dto";
+import { UserViewModel } from "../../dto/user.view.model";
 
-export async function createUserHandler(req:Request, res: Response) {
+export async function createUserHandler(req:RequestWithBody<UserInputDto>, res: Response<UserViewModel>) {
 try{
     const result = await UserServices.create(req.body);
-    const newUser = await userQueryRepository.findByIdOrFail(result)
-    res.status(HttpStatus.Created).send(newUser)
+    const userPostModel = await userQueryRepository.findByIdOrFail(result)
+    res.status(HttpStatus.Created).send(userPostModel)
 
     }catch (e: unknown) {
         errorsHandler(e, res);
