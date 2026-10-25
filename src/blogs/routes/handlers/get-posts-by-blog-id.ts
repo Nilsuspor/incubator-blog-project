@@ -1,6 +1,6 @@
 import { Response } from "express";
 import { HttpStatus } from "../../../core/types/http-statuses";
-import { RequestWithParams, RequestWithParamsAndQuery } from "../../../core/types/request_types";
+import { RequestWithParamsAndQuery } from "../../../core/types/request_types";
 import { PostQueryInput } from "../../../posts/routes/input/post-query.input";
 import { buildPostPagination } from "../../../posts/routes/output/post-list-paginated.uotput";
 import { blogsQueryRepository } from "../../repository/blog.query.repository";

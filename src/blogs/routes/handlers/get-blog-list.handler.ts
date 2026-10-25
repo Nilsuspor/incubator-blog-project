@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import {  Response } from "express";
 import { HttpStatus } from "../../../core/types/http-statuses";
 import { BlogQueryInput } from "../input/blog-query.input";
 import { buildBlogPagination } from "../output/blog-list-paginated.output";
