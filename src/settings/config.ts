@@ -4,7 +4,6 @@ config()
 
 const env = process.env;
 
-
 export const SETTINGS = {
   PORT: env.PORT || 5001,
   DB_NAME: env.DB_NAME || 'blog_platform_incubator',
