@@ -25,7 +25,6 @@ describe('/auth/login', () => {
     await stopDb(); 
   });
 
-  // Данные юзера, с которыми мы будем работать во всех тестах
   const newUserDto = {
     login: 'testNinja',
     password: 'validPassword123',
@@ -54,7 +53,7 @@ describe('/auth/login', () => {
         loginOrEmail: newUserDto.login, // Передаем логин
         password: newUserDto.password
       })
-      .expect(HttpStatus.NoContent); // Успешный ответ 204
+      .expect(HttpStatus.Ok); // Успешный ответ 204
   });
 
   it('✅ should successfully login user by EMAIL; POST /auth/login', async () => {
@@ -64,6 +63,6 @@ describe('/auth/login', () => {
         loginOrEmail: newUserDto.email, // Передаем email
         password: newUserDto.password
       })
-      .expect(HttpStatus.NoContent); // Успешный ответ 204
+      .expect(HttpStatus.Ok); // Успешный ответ 204
   });
 });

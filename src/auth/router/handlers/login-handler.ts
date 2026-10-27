@@ -13,7 +13,7 @@ export const loginHandler = async (req: RequestWithBody<LoginDto>, res: Response
 
 
      if (result.status !== ResultStatus.Success) {
-      return res.status(resultCodeToHttpException(result.status)).send(result.extensions);
+      return res.status(resultCodeToHttpException(result.status)).send({errorsMessages:result.extensions});
     }
 
     return res.status(HttpStatus.Ok).send({ accessToken: result.data!.accessToken });
