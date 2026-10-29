@@ -3,8 +3,9 @@ import { userRepository } from "../repository/user.repository";
 import { User } from "../types/user";
 import { bcryptService } from "../../auth/adapters/bcrypt.service";
 import { BadRequestException } from "../../core/exceptions/bad-request.exception";
+import { WithId } from "mongodb";
 
-export const UserServices = {
+export const userServices = {
 
     
     async create(dto: UserInputDto):Promise<string>{
@@ -38,7 +39,9 @@ export const UserServices = {
     async delete(id:string):Promise<void>{
       await userRepository.deleteById(id)
       return 
+    },
+
+    async findByid(id:string):Promise<WithId<User>|null>{
+      return await userRepository.findById(id)
     }
-
-
 }

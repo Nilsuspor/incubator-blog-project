@@ -2,7 +2,7 @@ import { Post } from "../types/posts";
 import { ObjectId, Filter } from "mongodb";
 import { postCollection } from "../../db/collections";
 import { PostQueryInput } from "../routes/input/post-query.input";
-import { mapToPostViewModel } from "../routes/mappers/map-to post-view-model.util";
+import { mapToPostViewModel } from "../utils/mappers/map-to post-view-model.util";
 import { PostViewModel } from "../dto/post.view.model";
 import { NotFoundException } from "../../core/exceptions/not-found.exception";
 

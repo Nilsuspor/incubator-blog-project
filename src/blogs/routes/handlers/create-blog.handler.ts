@@ -9,7 +9,7 @@ import { errorsHandler } from "../../../core/exceptions/errors-handler";
 export async function createBlogHandler(
     req: RequestWithBody<BlogInputDto>, res: Response<BlogViewModel>){
     try {      
-    const createdBlog = await BlogServices.createBlogService(req.body)
+    const createdBlog = await BlogServices.createBlog(req.body)
     res.status(HttpStatus.Created).send(createdBlog)        
     } catch (e: unknown) {
                errorsHandler(e, res);

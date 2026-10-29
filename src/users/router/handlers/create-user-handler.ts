@@ -1,5 +1,5 @@
 import { Response } from "express";
-import { UserServices } from "../../application/user.service";
+import { userServices } from "../../application/user.service";
 import { HttpStatus } from "../../../core/types/http-statuses";
 import { userQueryRepository } from "../../repository/users.query.repository";
 import { errorsHandler } from "../../../core/exceptions/errors-handler";
@@ -9,7 +9,7 @@ import { UserViewModel } from "../../dto/user.view.model";
 
 export async function createUserHandler(req:RequestWithBody<UserInputDto>, res: Response<UserViewModel>) {
 try{
-    const result = await UserServices.create(req.body);
+    const result = await userServices.create(req.body);
     const userPostModel = await userQueryRepository.findByIdOrFail(result)
     res.status(HttpStatus.Created).send(userPostModel)
 

@@ -9,7 +9,7 @@ import { errorsHandler } from "../../../core/exceptions/errors-handler";
 export async function updateBlogHandler(
     req: RequestWithParamsAndBody<{id:string},BlogInputDto>,  res: Response){
     try{
-        const isBlogUpdated = await BlogServices.updateBlogService(req.params.id, req.body)
+        const isBlogUpdated = await BlogServices.updateBlog(req.params.id, req.body)
       res.sendStatus(HttpStatus.NoContent)
     }catch (e: unknown) {
         errorsHandler(e, res);

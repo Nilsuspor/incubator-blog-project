@@ -1,13 +1,10 @@
 import { ResultStatus } from "./resultCode";
+import { ValidationErrorType } from "../types/validation-error";
 
-type ExtensionType = {
-  field: string | null;
-  message: string;
-};
 
 export type Result<T = null> = {
   status: ResultStatus;
   errorMessage?: string;
-  extensions: ExtensionType[];
+  extensions: ValidationErrorType[];
   data: T;
 };

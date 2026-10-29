@@ -2,7 +2,7 @@ import { Blog } from "../types/blogs";
 import { blogCollection } from "../../db/collections";
 import { ObjectId, Filter } from "mongodb";
 import { BlogQueryInput } from "../routes/input/blog-query.input";
-import { mapToBlogViewModel } from "../routes/mappers/map-to-blog-view-model.util";
+import { mapToBlogViewModel } from "../utils/mappers/map-to-blog-view-model.util";
 import { BlogViewModel } from "../dto/blog.view.model";
 import { NotFoundException } from "../../core/exceptions/not-found.exception";
 

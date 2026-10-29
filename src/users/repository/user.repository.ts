@@ -27,4 +27,12 @@ export const userRepository = {
     })
         return foundUser
     },
+
+    async findById(id:string):Promise<WithId<User>|null>{
+        const foundUser = await userCollection.findOne({_id: new ObjectId(id)})
+        if (!foundUser){
+            throw new NotFoundException('User not found')
+        }
+        return foundUser
+    }
 }

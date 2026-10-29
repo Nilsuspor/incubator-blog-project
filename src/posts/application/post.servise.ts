@@ -1,6 +1,6 @@
 import { PostInputDto } from "../dto/post.input.dto"
 import { postRepository } from "../repository/post.repository"
-import { mapPostInputDtoToPost } from "../routes/mappers/map-post-input-dto-to-post.util"
+import { mapPostInputDtoToPost } from "../utils/mappers/map-post-input-dto-to-post.util"
 import { NotFoundException } from "../../core/exceptions/not-found.exception"
 import { blogsRepository } from "../../blogs/repository/blog.repository"
 

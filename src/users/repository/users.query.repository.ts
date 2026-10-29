@@ -2,7 +2,7 @@ import { ObjectId, Filter } from "mongodb";
 import { UserQueryInput } from "../router/input/user-query.input";
 import { User } from "../types/user";
 import { userCollection } from "../../db/collections";
-import { mapToUserViewModel } from "./mappers/map-to-user-view-model-unit";
+import { mapToUserViewModel } from "../utils/mappers/map-to-user-view-model-unit";
 import { UserViewModel } from "../dto/user.view.model";
 import { NotFoundException } from "../../core/exceptions/not-found.exception";
 

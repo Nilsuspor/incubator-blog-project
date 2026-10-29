@@ -8,7 +8,7 @@ export async function deleteBlogHandler (req: RequestWithParams<{id:string}>,
     res: Response){
    try{
            
-        const isBlogDeleted = await BlogServices.deleteBlogService(req.params.id)
+        const isBlogDeleted = await BlogServices.deleteBlog(req.params.id)
         res.sendStatus(HttpStatus.NoContent)
        }catch (e: unknown) {
                errorsHandler(e, res);
