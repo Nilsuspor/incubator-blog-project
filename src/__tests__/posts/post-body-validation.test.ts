@@ -11,8 +11,7 @@ import { createBlog } from '../utils/blogs/create-blog';
 import { POSTS_PATH } from '../../posts/constants/posts.path';
 import { HttpStatus } from '../../core/types/http-statuses';
 import { BlogViewModel } from '../../blogs/dto/blog.view.model';
-
-
+import jwt from 'jsonwebtoken';
 
 describe('/posts', () => {
   const app = express();
@@ -76,4 +75,41 @@ describe('/posts', () => {
       .send({}) // Пустое тело
       .expect(HttpStatus.Unauthorized); // Ожидаем 401, а не падение сервера
   });
+
+ it('❌ should return 404 if post does not exist; POST /posts/:id/comments', async () => {
+    // 1. Создаем валидный токен вручную!
+    const fakeUserId = '654321654321654321654321';
+    // Используем тот же секрет, что и в приложении
+    const validToken = jwt.sign({ userId: fakeUserId }, SETTINGS.JWT_SECRET, { expiresIn: '1h' });
+
+    const fakePostId = '111111111111111111111111'; // Фейковый, но валидный MongoId
+
+    await request(app)
+      .post(`${POSTS_PATH}/${fakePostId}/comments`)
+      .set('Authorization', `Bearer ${validToken}`) // Отправляем наш 100% валидный токен
+      .send({ content: 'This is a test comment that is exactly 21 chars' })
+      .expect(HttpStatus.NotFound); 
+});
+
+it('❌ should return 404 if post does not exist; POST /posts/:id/comments', async () => {
+    // 1. Создаем юзера через админский эндпоинт
+    await request(app)
+      .post('/users')
+      .set('Authorization', adminToken)
+      .send({ login: 'testUser', password: 'password123', email: 'test@test.com' });
+      
+    // 2. Теперь логин пройдет успешно и вернет токен!
+    const loginRes = await request(app)
+      .post('/auth/login')
+      .send({ loginOrEmail: 'testUser', password: 'password123' });
+    const accessToken = loginRes.body.accessToken;
+
+    const fakePostId = '111111111111111111111111';
+
+    await request(app)
+      .post(`${POSTS_PATH}/${fakePostId}/comments`)
+      .set('Authorization', `Bearer ${accessToken}`)
+      .send({ content: 'This is a test comment that is exactly 21 chars' })
+      .expect(HttpStatus.NotFound); 
+});
 });

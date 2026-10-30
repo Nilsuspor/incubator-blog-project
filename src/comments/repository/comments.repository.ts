@@ -4,8 +4,8 @@ import { commentCollection } from "../../db/collections";
 
 
 export const commentsRepository = {
-    async createComment(newComment: Comment):Promise<WithId<Comment>>{
+    async createComment(newComment: Comment):Promise<string>{
         const insertResult = await commentCollection.insertOne(newComment)
-        return {...newComment, _id:insertResult.insertedId}
+        return insertResult.insertedId.toString()
     }
 }

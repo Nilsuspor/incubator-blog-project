@@ -3,7 +3,8 @@ import { postRepository } from "../repository/post.repository"
 import { mapPostInputDtoToPost } from "../utils/mappers/map-post-input-dto-to-post.util"
 import { NotFoundException } from "../../core/exceptions/not-found.exception"
 import { blogsRepository } from "../../blogs/repository/blog.repository"
-
+import { WithId } from "mongodb"
+import { Post } from "../types/posts"
 
 export const PostServices = {
         async createPostService(blogId: string, post:PostInputDto):Promise<string>{
@@ -34,5 +35,13 @@ export const PostServices = {
     async deletePostService(id:string):Promise<void>{
         await postRepository.deletePost(id)
         return
-    },    
+    }, 
+    
+    async findById(id:string):Promise<WithId<Post>>{
+        const foundPost = await postRepository.findById(id)
+        if (!foundPost){
+            throw new NotFoundException('Post not found')
+        }
+        return foundPost
+    }
 }

@@ -1,6 +1,6 @@
 
 import { Post } from "../types/posts";
-import { ObjectId } from "mongodb";
+import { ObjectId, WithId } from "mongodb";
 import { postCollection } from "../../db/collections";
 import { NotFoundException } from "../../core/exceptions/not-found.exception";
 
@@ -32,7 +32,15 @@ export const postRepository = {
     await postCollection.deleteMany({blogId})
     
     return 
-    }
+    }, 
+
+     async findById(id : string): Promise<WithId<Post>|null>{
+          const foundPost = await postCollection.findOne({_id:new ObjectId(id)})
+          if (!foundPost) {
+             return null
+          }
+           return (foundPost)
+        },
 
     
 

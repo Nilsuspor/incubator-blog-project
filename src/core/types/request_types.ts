@@ -7,5 +7,4 @@ export type RequestWithParams<P> = Request<P>
 export type RequestWithParamsAndBody<P,B> = Request<P,{}, B>
 export type RequestWithParamsAndQuery<P, Q> = Request<P, {}, {}, Q>;
 export type RequestWithUserId<U extends IdType> = Request<{}, {}, {}, {}, U>;
-export type RequestWithParamsAndBodyAndUserId<P, B, U extends IdType> = 
-    Request<P, {}, B> & { user: U };
+export type RequsetWithParamsAndBodyAndUserId<P, B, U extends IdType> = Request<P,{},B,{},U>

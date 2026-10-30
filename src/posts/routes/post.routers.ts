@@ -13,6 +13,8 @@ import { paginationAndSortingValidation } from "../../core/middlewares/validatio
 import { PostSortFields } from "./input/post-sort-fields";
 import { sanitizeQueryParams } from "../../core/middlewares/validation/sanitize-query-middleware";
 import { use } from "../../core/utils/express-utils";
+import { accessTokenGuard } from "../../auth/middlewares/access.token.guard";
+import { createCommentForPostHandler } from "./handlers/create-comment-for-post.handler";
 
 export const postsRouter = Router({})
 
@@ -46,3 +48,9 @@ export const postsRouter = Router({})
         idValidation,
         inputValidationResultMiddleware,
         deletePostHandler)
+
+    postsRouter.post(POSTS_ROUTES.BY_ID_COMMENTS,
+        accessTokenGuard,
+        createCommentForPostHandler
+
+    )    

@@ -101,4 +101,54 @@ it('✅ should update post; PUT /posts/:id', async()=>{
 
 })
 
+it('✅ should create comment for post; POST /posts/:id/comments', async () => {
+    // 1. Создаем пользователя, чтобы получить от него токен
+    // (У тебя должна быть утилита createUser или запрос к /users)
+    const userRes = await request(app)
+      .post('/users')
+      .set('Authorization', adminToken)
+      .send({
+        login: 'testUser',
+        password: 'password123',
+        email: 'test@test.com'
+      })
+      .expect(201);
+    
+    // 2. Логинимся, чтобы получить JWT accessToken
+    const loginRes = await request(app)
+      .post('/auth/login')
+      .send({
+        loginOrEmail: 'testUser',
+        password: 'password123'
+      })
+      .expect(200);
+      
+    const accessToken = loginRes.body.accessToken;
+
+    // 3. Создаем пост, под которым будем оставлять комментарий
+    const createdPost = await createPost(app);
+
+    // 4. Отправляем запрос на создание комментария
+    const commentInput = {
+      content: 'This is a test comment that is exactly 21 chars' // Помни про валидацию длины (обычно от 20 до 300)
+    };
+
+    const commentRes = await request(app)
+      .post(`${POSTS_PATH}/${createdPost.id}/comments`)
+      .set('Authorization', `Bearer ${accessToken}`)
+      .send(commentInput)
+      .expect(201); // Ожидаем статус Created
+
+    // 5. Проверяем структуру возвращаемого комментария
+    expect(commentRes.body).toEqual({
+      id: expect.any(String),
+      content: commentInput.content,
+      commentatorInfo: {
+        userId: userRes.body.id,
+        userLogin: userRes.body.login
+      },
+      createdAt: expect.any(String) // Ожидаем любую строку даты
+    });
+  });
+
 })
