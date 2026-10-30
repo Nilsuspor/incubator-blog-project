@@ -1,8 +1,8 @@
-import { Blog } from "../../types/blogs"
+import { BlogViewModel } from "../../dto/blog.view.model";
 
 
 export function buildBlogPagination(
-  items: Blog[], 
+  items: BlogViewModel[], 
   totalCount: number, 
   pageNumber: number, 
   pageSize: number

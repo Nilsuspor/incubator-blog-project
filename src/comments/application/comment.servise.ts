@@ -11,11 +11,11 @@ export const commentsServices = {
         if (!currentUser){
             throw new NotFoundException('User not found')
         }
-        const post = await PostServices.findById(postId)
+        await PostServices.findById(postId)
         
         const mappedtoBdModelComment = mapCommentInputDtoToComment(content, currentUser, postId)
-        const commentId = await commentsRepository.createComment(mappedtoBdModelComment)
+        const createdCommentId = await commentsRepository.createComment(mappedtoBdModelComment)
 
-        return commentId
+        return createdCommentId
     }
 }

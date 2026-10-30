@@ -1,7 +1,7 @@
-import { Post } from "../../types/posts";
+import { PostViewModel } from "../../dto/post.view.model";
 
 export function buildPostPagination(
-    items: Post[],
+    items: PostViewModel[],
     totalCount: number,
     pageNumber: number,
     pageSize: number

@@ -12,7 +12,7 @@ import { superAdminGuardMiddleware } from "../../auth/middlewares/super_admin.gu
 import { paginationAndSortingValidation } from "../../core/middlewares/validation/query-pagination-sorting.validation.middleware";
 import { BlogSortFields } from "./input/blog-sort-field";
 import { sanitizeQueryParams } from "../../core/middlewares/validation/sanitize-query-middleware";
-import { getPostByBlogId } from "./handlers/get-posts-by-blog-id";
+import { getPostsByBlogId } from "./handlers/get-posts-by-blog-id";
 import { PostSortFields } from "../../posts/routes/input/post-sort-fields";
 import { createPostforBlogHandler } from "./handlers/create-post-for-blog";
 import { postForBlogInputValidation } from "../../posts/validation/post.input-dto.validation-middlewares";
@@ -39,7 +39,7 @@ export const blogsRouter = Router({})
        paginationAndSortingValidation(PostSortFields),
         inputValidationResultMiddleware, 
         sanitizeQueryParams,
-        use(getPostByBlogId));
+        use(getPostsByBlogId));
 
 
    blogsRouter.post(
