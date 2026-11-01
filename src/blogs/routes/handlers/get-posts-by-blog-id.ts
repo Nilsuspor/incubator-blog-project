@@ -7,9 +7,9 @@ import { blogsQueryRepository } from "../../repository/blog.query.repository";
 import { postQueryRepository } from "../../../posts/repository/post.query.repository";
 import { errorsHandler } from "../../../core/exceptions/errors-handler";
 
-export async function getPostByBlogId(req: RequestWithParamsAndQuery<{id:string}, PostQueryInput>, res: Response){
+export async function getPostsByBlogId(req: RequestWithParamsAndQuery<{blogId:string}, PostQueryInput>, res: Response){
     try{
-        const blogId = req.params.id;
+        const blogId = req.params.blogId;
         await blogsQueryRepository.findByIdOrFail(blogId)
         const queryInput = req.query;      
         const { mappedPosts, totalCount } = await postQueryRepository.findMany(queryInput, blogId);      
