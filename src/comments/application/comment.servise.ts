@@ -1,4 +1,3 @@
-
 import { NotFoundException } from "../../core/exceptions/not-found.exception";
 import { PostServices } from "../../posts/application/post.servise";
 import { userServices } from "../../users/application/user.service";
@@ -11,11 +10,18 @@ export const commentsServices = {
         if (!currentUser){
             throw new NotFoundException('User not found')
         }
-        const post = await PostServices.findById(postId)
+        await PostServices.findById(postId)
         
         const mappedtoBdModelComment = mapCommentInputDtoToComment(content, currentUser, postId)
-        const commentId = await commentsRepository.createComment(mappedtoBdModelComment)
+        const createdCommentId = await commentsRepository.createComment(mappedtoBdModelComment)
 
-        return commentId
-    }
+        return createdCommentId
+    },
+
+    async deleteOne(id: string): Promise<void> {
+                const isDeleted = await commentsRepository.deleteOne(id);
+                if (!isDeleted) {
+                     throw new NotFoundException('Comment not found');
+                 }
+             },
 }

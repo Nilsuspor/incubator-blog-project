@@ -54,7 +54,6 @@ export const blogsQueryRepository = {
           if (!foundBlog) {
             throw new NotFoundException('Blog not found');
         }
-
           return foundBlog;
         }
     

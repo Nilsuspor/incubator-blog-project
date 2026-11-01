@@ -7,7 +7,7 @@ import { errorsHandler } from "../../../core/exceptions/errors-handler";
 
 export async function updatePostHandler(req: RequestWithParamsAndBody<{id:string},PostInputDto>, res: Response){
   try {  
-    await PostServices.updatePostService(req.params.id, req.body);  
+    await PostServices.updateOne(req.params.id, req.body);  
     res.sendStatus(HttpStatus.NoContent);
     }catch (e: unknown) {
                 errorsHandler(e, res);

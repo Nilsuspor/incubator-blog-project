@@ -7,12 +7,12 @@ import { HttpStatus } from "../../../core/types/http-statuses";
 import { errorsHandler } from "../../../core/exceptions/errors-handler";
 import { Response } from "express";
 
-export async function getCommentsByPodtId(req: RequestWithParamsAndQuery<{id:string}, CommentQueryInput>, res: Response){
+export async function getCommentsByPostIdHandler(req: RequestWithParamsAndQuery<{id:string}, CommentQueryInput>, res: Response){
     try{
-        const blogId = req.params.id;
-        await postQueryRepository.findByIdOrFail(blogId)
+        const postId = req.params.id;
+        await postQueryRepository.findByIdOrFail(postId)
         const queryInput = req.query;      
-        const { mappedComments, totalCount } = await commentsQueryRepository.findMany(queryInput, blogId);      
+        const { mappedComments, totalCount } = await commentsQueryRepository.findMany(queryInput, postId);      
         
          const response = buildCommentPagination(
                     mappedComments,

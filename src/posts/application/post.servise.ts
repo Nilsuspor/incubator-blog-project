@@ -21,7 +21,7 @@ export const PostServices = {
     return createdPostId;
     } ,   
 
-    async updatePostService(id:string, body: PostInputDto): Promise<void>{
+    async updateOne(id:string, body: PostInputDto): Promise<void>{
             const foundBlog = await blogsRepository.findById(body.blogId)
             if (!foundBlog) throw new NotFoundException('Blog not found');
 
@@ -32,10 +32,14 @@ export const PostServices = {
          await postRepository.updatePost(id, updateData);  
           return 
         },
-    async deletePostService(id:string):Promise<void>{
-        await postRepository.deletePost(id)
-        return
-    }, 
+
+
+    async deleteOne(id: string): Promise<void> {
+            const isDeleted = await postRepository.deleteOne(id);
+            if (!isDeleted) {
+                 throw new NotFoundException('Post not found');
+             }
+         },
     
     async findById(id:string):Promise<WithId<Post>>{
         const foundPost = await postRepository.findById(id)

@@ -2,7 +2,6 @@
 import { Post } from "../types/posts";
 import { ObjectId, WithId } from "mongodb";
 import { postCollection } from "../../db/collections";
-import { NotFoundException } from "../../core/exceptions/not-found.exception";
 
 export const postRepository = {
     async createPost(newPost: Post): Promise<string> {
@@ -19,13 +18,11 @@ export const postRepository = {
         return updateResult.matchedCount>0
     },
 
-     async deletePost(id: string): Promise<void> {
+   async deleteOne(id: string): Promise<boolean> {
   const deleteResult = await postCollection.deleteOne({
     _id: new ObjectId(id),
   });
- if (deleteResult.deletedCount < 1) {
-               throw new NotFoundException('Post not found');
-           }
+    return deleteResult.deletedCount > 0;
 },
 
    async deletePostsByBlogId(blogId: string) {

@@ -15,6 +15,9 @@ import { sanitizeQueryParams } from "../../core/middlewares/validation/sanitize-
 import { use } from "../../core/utils/express-utils";
 import { accessTokenGuard } from "../../auth/middlewares/access.token.guard";
 import { createCommentForPostHandler } from "./handlers/create-comment-for-post.handler";
+import { getCommentsByPostIdHandler } from "./handlers/get-comments-by-blog-id";
+import { CommentSortFields } from "../../comments/routs/input/comment-sort-fields";
+import { commentInputDtoValidation } from "../../comments/validation/comment,input-dto.validation-middlewares";
 
 export const postsRouter = Router({})
 
@@ -27,7 +30,17 @@ export const postsRouter = Router({})
 
     postsRouter.get(
         POSTS_ROUTES.BY_ID,
+        idValidation,
+        inputValidationResultMiddleware,
         getPostHandler);
+
+    postsRouter.get(POSTS_ROUTES.BY_ID_COMMENTS,
+        idValidation,
+        paginationAndSortingValidation(CommentSortFields),
+        inputValidationResultMiddleware,
+        sanitizeQueryParams,
+        use(getCommentsByPostIdHandler)
+    )    
 
     postsRouter.post(POSTS_ROUTES.ROOT,
         superAdminGuardMiddleware,
@@ -51,6 +64,8 @@ export const postsRouter = Router({})
 
     postsRouter.post(POSTS_ROUTES.BY_ID_COMMENTS,
         accessTokenGuard,
+        commentInputDtoValidation,
+        inputValidationResultMiddleware,
         createCommentForPostHandler
 
     )    

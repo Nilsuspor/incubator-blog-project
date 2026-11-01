@@ -2,7 +2,6 @@
 import { Blog } from "../types/blogs";
 import { blogCollection } from "../../db/collections";
 import { ObjectId, WithId } from "mongodb";
-import { NotFoundException } from "../../core/exceptions/not-found.exception";
 
 
 export const blogsRepository = {
@@ -12,25 +11,19 @@ export const blogsRepository = {
     return {...newBlog, _id:insertResult.insertedId}
     },
 
-     async updateBlog (id : string, blog: Omit<Blog, 'createdAt'|'isMembership'>):Promise<void>{
+     async updateBlog (id : string, blog: Omit<Blog, 'createdAt'|'isMembership'>):Promise<boolean>{
         const updateResult = await blogCollection.updateOne(
           {_id: new ObjectId(id)},
           {$set: blog}
         )
-         if (updateResult.matchedCount < 1) {
-        throw new NotFoundException('Blog not found');
-    }
-        
+        return updateResult.matchedCount>0
     },
 
-    async deleteBlog(id:string):Promise<void>{
+    async deleteBlog(id:string):Promise<boolean>{
       const deleteResult = await blogCollection.deleteOne({
         _id: new ObjectId(id)
       })
-
-      if (deleteResult.deletedCount < 1) {
-        throw new NotFoundException('Blog not found');
-    }
+      return deleteResult.deletedCount > 0;
     },
 
     async findById(id: string): Promise<Blog|null> {

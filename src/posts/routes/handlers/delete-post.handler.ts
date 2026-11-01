@@ -9,7 +9,7 @@ export async function deletePostHandler(
   res: Response,
 ) {
   try {
-    await PostServices.deletePostService(req.params.id);
+    await PostServices.deleteOne(req.params.id);
     res.sendStatus(HttpStatus.NoContent); 
   } catch (e: unknown) {
               errorsHandler(e, res);

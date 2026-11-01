@@ -3,6 +3,7 @@ import { mapToBlogViewModel } from "../utils/mappers/map-to-blog-view-model.util
 import { BlogViewModel } from "../dto/blog.view.model";
 import { BlogInputDto } from "../dto/blog.input.dto";
 import { mapBlogInputDtoToBlog } from "../utils/mappers/map-blog-input-dto-to-blog.util";
+import { NotFoundException } from "../../core/exceptions/not-found.exception";
 
 export const BlogServices = {
 
@@ -18,12 +19,18 @@ export const BlogServices = {
         },
         
     async updateBlog(id:string, body: BlogInputDto): Promise<void>{
-        await blogsRepository.updateBlog(id, mapBlogInputDtoToBlog(body))
-        return
+        const updatedResult = await blogsRepository.updateBlog(id, mapBlogInputDtoToBlog(body))
+         if (!updatedResult) {
+        throw new NotFoundException('Blog not found');
+    }
+
     },
     
     async deleteBlog(id:string):Promise<void>{
-        await blogsRepository.deleteBlog(id)
-        return 
+        const isDeleted = await blogsRepository.deleteBlog(id)
+        if (!isDeleted) {
+                 throw new NotFoundException('Blog not found');
+             }
+         
     }
 }

@@ -15,7 +15,7 @@ export async function createCommentForPostHandler(req:RequsetWithParamsAndBodyAn
     const postId = req.params.id;         
     const content = req.body.content;
     if (!req.user) {
-        res.sendStatus(HttpStatus.Unauthorized);
+        res.sendStatus(HttpStatus.BadRequest);
         return;
     }
     const userId = req.user.id;

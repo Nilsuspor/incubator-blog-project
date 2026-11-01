@@ -4,6 +4,8 @@ import { User } from "../types/user";
 import { bcryptService } from "../../auth/adapters/bcrypt.service";
 import { BadRequestException } from "../../core/exceptions/bad-request.exception";
 import { WithId } from "mongodb";
+import { NotFoundException } from "../../core/exceptions/not-found.exception";
+
 
 export const userServices = {
 
@@ -37,11 +39,19 @@ export const userServices = {
     },
     
     async delete(id:string):Promise<void>{
-      await userRepository.deleteById(id)
-      return 
+      const isDeleted =await userRepository.deleteById(id)
+      if (!isDeleted) {
+                 throw new NotFoundException('User not found');
+             }
     },
 
+
+
     async findByid(id:string):Promise<WithId<User>|null>{
-      return await userRepository.findById(id)
+      const foundUser = await userRepository.findById(id)
+      if (!foundUser){
+            throw new NotFoundException('User not found')
+        }
+      return foundUser  
     }
 }

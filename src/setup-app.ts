@@ -11,11 +11,12 @@ import { USERS_PATH } from "./users/constants/users.path";
 import { userRouter } from "./users/router/user-routes";
 import { AUTH_PATH } from "./auth/constant/auth.path";
 import { authRouter } from "./auth/router/auth.routers";
+import { COMMENT_PATH } from "./comments/constants/comment.path";
+import { commentRourter } from "./comments/routs/comment-routes";
 
 export const setupApp = (app: Express) => {
-  app.use(express.json()); // middleware для парсинга JSON в теле запроса
+  app.use(express.json()); 
  
-  // основной роут
   app.get("/", (req: Request, res: Response) => {
     res.status(HttpStatus.Ok).send("Hello world!");
   });
@@ -23,6 +24,7 @@ export const setupApp = (app: Express) => {
   app.use(POSTS_PATH, postsRouter)
   app.use(USERS_PATH, userRouter)
   app.use(AUTH_PATH,authRouter)
+  app.use(COMMENT_PATH, commentRourter)
   app.use (TESTING_PATH,testDelRouter)
 
   return app;
