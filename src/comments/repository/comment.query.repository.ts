@@ -4,13 +4,14 @@ import { ObjectId, Filter } from "mongodb";
 import { mapToCommentViewModel } from "../utils/mappers/map-comment-to-view-model";
 import { CommentQueryInput } from "../routes/input/comment-querry.input";
 import { Comment } from "../type/comment";
+import { NotFoundException } from "../../core/exceptions/not-found.exception";
 
 
 export const commentsQueryRepository = {
-    async findById(id: string):Promise<CommentViewModel|null>{
+    async findById(id: string):Promise<CommentViewModel>{
         const foundComment = await commentCollection.findOne({_id:new ObjectId(id)})
         if (!foundComment){
-            return null
+            throw new NotFoundException('Comment not found')
         }
         return mapToCommentViewModel(foundComment)
     },

@@ -33,6 +33,7 @@ export const blogsRouter = Router({})
     
       blogsRouter.get(
       BLOGS_ROUTES.BLOG_POSTS,
+      idValidation,
        paginationAndSortingValidation(PostSortFields),
         inputValidationResultMiddleware, 
         sanitizeQueryParams,

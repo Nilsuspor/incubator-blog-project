@@ -10,7 +10,7 @@ export async function getCommentHandler(
     res: Response<CommentViewModel>
 ){
     try{
-        const foundComment = await commentsQueryRepository.findByIdOrFail(req.params.id)
+        const foundComment = await commentsQueryRepository.findById(req.params.id)
         res.status(HttpStatus.Ok).send(foundComment)
     }catch (e: unknown) {
         errorsHandler(e, res);

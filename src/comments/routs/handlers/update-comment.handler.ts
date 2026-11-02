@@ -6,9 +6,9 @@ import { HttpStatus } from "../../../core/types/http-statuses";
 import { errorsHandler } from "../../../core/exceptions/errors-handler";
 import { commentsServices } from "../../application/comment.servise";
 
-export async function updateCommentHandler(req:RequsetWithParamsAndBodyAndUserId<{commentId:string}, CommentInputDto, IdType>, res: Response) {
+export async function updateCommentHandler(req:RequsetWithParamsAndBodyAndUserId<{id:string}, CommentInputDto, IdType>, res: Response) {
    try{
-    const commentId = req.params.commentId
+    const commentId = req.params.id
     const content = req.body.content
     if (!req.user) {
             res.sendStatus(HttpStatus.Unauthorized);
