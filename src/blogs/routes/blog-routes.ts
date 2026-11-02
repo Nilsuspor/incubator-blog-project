@@ -29,6 +29,8 @@ export const blogsRouter = Router({})
 
     blogsRouter.get(
       BLOGS_ROUTES.BY_ID,
+      idValidation,
+      inputValidationResultMiddleware,
         getBlogHandler);
     
       blogsRouter.get(

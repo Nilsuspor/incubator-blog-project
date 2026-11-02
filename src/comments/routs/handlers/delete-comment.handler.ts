@@ -9,6 +9,10 @@ export async function deleteCommentHandler(
     req: RequestWithParamsAndUserId<{id:string}, IdType>, 
     res: Response,
 ){
+    console.log("=== DELETE HANDLER ===");
+    console.log("req.headers.authorization:", req.headers.authorization);
+    console.log("req.user:", req.user);
+    console.log("======================");
     try {
         if (!req.user) {
             res.sendStatus(HttpStatus.Unauthorized);

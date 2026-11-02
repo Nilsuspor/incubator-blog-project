@@ -22,6 +22,11 @@ export const PostServices = {
     } ,   
 
     async updateOne(id:string, body: PostInputDto): Promise<void>{
+        const post = await postRepository.findById(id);
+    if (!post) {
+        throw new NotFoundException('Post not found');
+    }
+
             const foundBlog = await blogsRepository.findById(body.blogId)
             if (!foundBlog) throw new NotFoundException('Blog not found');
 

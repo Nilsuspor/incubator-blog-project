@@ -33,6 +33,11 @@ export const commentsServices = {
 
     async deleteOne(commentId: string, userId: string): Promise<void> {
         const comment = await commentsRepository.findByIdOrFail(commentId);
+        console.log("=== СРАВНЕНИЕ ID ===");
+    console.log("ID В КОММЕНТЕ:", comment.commentatorInfo.userId, "ТИП:", typeof comment.commentatorInfo.userId);
+    console.log("ID ИЗ ТОКЕНА:", userId, "ТИП:", typeof userId);
+    console.log("ОНИ РАВНЫ?", comment.commentatorInfo.userId === userId);
+    
         if (comment.commentatorInfo.userId !== userId) {
             throw new ForbiddenException('You can delete only your comments')
         }
