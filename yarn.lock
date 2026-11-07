@@ -2367,6 +2367,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"date-fns@npm:^4.4.0":
+  version: 4.4.0
+  resolution: "date-fns@npm:4.4.0"
+  checksum: 10c0/988f0a13db183f5dfc85c36bbb6847a9c135a9225888bbea4005876ec15539a8613c21a07370a4e7ea543918d5a1cafb423c528b42cdbbde5fdfddb178126b21
+  languageName: node
+  linkType: hard
+
 "debug@npm:4.3.2":
   version: 4.3.2
   resolution: "debug@npm:4.3.2"
@@ -3391,6 +3398,7 @@ __metadata:
     "@typescript-eslint/eslint-plugin": "npm:^8.70.0"
     "@typescript-eslint/parser": "npm:^8.70.0"
     bcrypt: "npm:^6.0.0"
+    date-fns: "npm:^4.4.0"
     dotenv: "npm:^18.0.9"
     eslint: "npm:^10.10.0"
     eslint-config-prettier: "npm:^10.1.8"
@@ -3401,6 +3409,7 @@ __metadata:
     jsonwebtoken: "npm:^9.0.3"
     localtunnel: "npm:^2.0.2"
     mongodb: "npm:^7.6.0"
+    nodemailer: "npm:^10.3.1"
     nodemon: "npm:^3.1.14"
     prettier: "npm:^3.9.6"
     supertest: "npm:^7.3.0"
@@ -4575,6 +4584,13 @@ __metadata:
   version: 2.0.55
   resolution: "node-releases@npm:2.0.55"
   checksum: 10c0/35a779a188b3c1801820b77ea3c429d0aacac346368016a92c357dfd781f2908540fc3782b25d41647c3334dec83c976890f40d254bfd788eb5e72c3730146d1
+  languageName: node
+  linkType: hard
+
+"nodemailer@npm:^10.3.1":
+  version: 10.3.1
+  resolution: "nodemailer@npm:10.3.1"
+  checksum: 10c0/a960ba9e7cb8f7135b828fb72bcdfd061bb914c6357578ed6613dd5303e8461710a1151210e95a92542461128e900038dd0794fc27bd74b297bd822013cfe8e8
   languageName: node
   linkType: hard
 

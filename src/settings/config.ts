@@ -13,5 +13,8 @@ export const SETTINGS = {
   ADMIN_PASSWORD: env.ADMIN_PASSWORD as string,
 
   JWT_SECRET: env.JWT_SECRET as string,
-  JWT_EXPIRES_IN: env.JWT_EXPIRES_IN || '10s'
+  JWT_EXPIRES_IN: env.JWT_EXPIRES_IN || '10s',
+
+  EMAIL: env.EMAIL as string,
+  EMAIL_PASS: env.EMAIL_PASS as string
 };

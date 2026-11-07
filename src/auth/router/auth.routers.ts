@@ -5,6 +5,8 @@ import { loginValidation } from "../adapters/auth.input-dto.validation-middlewar
 import { inputValidationResultMiddleware } from "../../core/middlewares/validation/input-validation-result.middleware";
 import { accessTokenGuard } from "../middlewares/access.token.guard";
 import { meHandler } from "./handlers/me-handler";
+import { AuthServices } from "../application/auth.service";
+import { registrationHandler } from "./handlers/registration-handler";
 
 
 export const authRouter = Router({})
@@ -18,4 +20,8 @@ authRouter.post(AUTH_ROUTES.LOGIN,
 authRouter.get(AUTH_ROUTES.ME,
     accessTokenGuard,
     meHandler
+)
+
+authRouter.post(AUTH_ROUTES.REGISTRATION,
+    registrationHandler
 )

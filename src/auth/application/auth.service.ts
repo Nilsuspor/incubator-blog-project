@@ -5,6 +5,12 @@ import { ResultStatus } from "../../core/result/resultCode";
 import { jwtServiсe } from "../adapters/jwt.service";
 import { User } from "../../users/types/user";
 import { WithId } from "mongodb";
+import { randomUUID } from "node:crypto";
+import { add } from "date-fns";
+import { userServices } from "../../users/application/user.service";
+import nodemailer from "nodemailer";
+import { nodemailerService } from "../adapters/nodemailer.service";
+import { emailExamples } from "../adapters/emailExamples";
 
 export const AuthServices = {
     async loginUser(
@@ -51,6 +57,47 @@ export const AuthServices = {
     return {
       status: ResultStatus.Success,
       data: user,
+      extensions: [],
+    };
+},
+
+async registerUser(login: string, password: string, email: string){
+  const user = await userRepository.findByLoginOrEmail(login, email)
+  if (user)  return {
+        status: ResultStatus.BadRequest,
+        data: null,
+        errorMessage: 'Bad Request',
+        extensions: [{ field: 'login/email', message: 'User with this login exists' }],
+      }; 
+  const passwordHash = await bcryptService.generateHash(password)
+  
+  const newUser: User = {
+    login,
+    email,
+    passwordHash,
+    createdAt: new Date().toISOString(),
+    emailConfirmation: {
+      confirmationCode: randomUUID(),
+      expirationDate: add(new Date(), {
+        hours :1,
+        minutes:30,
+      }),
+      isConfirmed: false
+  
+    }
+  }
+
+  await userRepository.create(newUser)
+
+  nodemailerService
+  .sendEmail(
+    newUser.email,
+    newUser.emailConfirmation!.confirmationCode,
+    emailExamples.registrationEmail,
+  ).catch(er => console.error('error in send email:', er));
+ return {
+      status: ResultStatus.Success,
+      data: newUser,
       extensions: [],
     };
 }
