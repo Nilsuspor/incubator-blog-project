@@ -8,7 +8,9 @@ import { LoginDto } from "../../dto/login.dto";
 import { LoginSuccessViewModel } from "../../dto/login.success.view.,model";
 import { ValidationErrorDto } from "../../../core/types/validation-error";
 
-export const loginHandler = async (req: RequestWithBody<LoginDto>, res: Response<LoginSuccessViewModel| ValidationErrorDto>) => {
+export const loginHandler = async (req: RequestWithBody<LoginDto>, 
+    res: Response<LoginSuccessViewModel| ValidationErrorDto>) => 
+        {
     const { loginOrEmail, password } = req.body;
 
     const result = await AuthServices.loginUser(loginOrEmail, password);

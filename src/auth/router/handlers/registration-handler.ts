@@ -8,16 +8,16 @@ import { errorsHandler } from "../../../core/exceptions/errors-handler";
 
 export const registrationHandler = async(req: RequestWithBody<RegistrationDto>, res: Response)=>{
     try {
-       const { login, email, password } = req.body;
-        
-       const result = await AuthServices.registerUser(login, password, email)
+       const result = await AuthServices.registerUser(req.body)
 
        if (result.status === ResultStatus.BadRequest){
         res.status(HttpStatus.BadRequest).send({errorsMessages:result.extensions})
+        return;
        }
        res.sendStatus(HttpStatus.NoContent);
     }catch (e: unknown) {
         errorsHandler(e, res); 
     }
+
 
 }

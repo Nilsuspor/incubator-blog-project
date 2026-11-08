@@ -5,8 +5,9 @@ import { loginValidation } from "../adapters/auth.input-dto.validation-middlewar
 import { inputValidationResultMiddleware } from "../../core/middlewares/validation/input-validation-result.middleware";
 import { accessTokenGuard } from "../middlewares/access.token.guard";
 import { meHandler } from "./handlers/me-handler";
-import { AuthServices } from "../application/auth.service";
 import { registrationHandler } from "./handlers/registration-handler";
+import { activationUserHandler } from "./handlers/activation-user-handler";
+import { resendEmailHandler } from "./handlers/resend-email-handler";
 
 
 export const authRouter = Router({})
@@ -24,4 +25,12 @@ authRouter.get(AUTH_ROUTES.ME,
 
 authRouter.post(AUTH_ROUTES.REGISTRATION,
     registrationHandler
+)
+
+authRouter.post(AUTH_ROUTES.CONFIRMATION,
+    activationUserHandler
+)
+
+authRouter.post(AUTH_ROUTES.RESEND_EMAIL,
+    resendEmailHandler
 )

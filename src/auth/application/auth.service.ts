@@ -7,10 +7,10 @@ import { User } from "../../users/types/user";
 import { WithId } from "mongodb";
 import { randomUUID } from "node:crypto";
 import { add } from "date-fns";
-import { userServices } from "../../users/application/user.service";
-import nodemailer from "nodemailer";
 import { nodemailerService } from "../adapters/nodemailer.service";
 import { emailExamples } from "../adapters/emailExamples";
+import { RegistrationDto } from "../dto/registration.dto";
+import { userServices } from "../../users/application/user.service";
 
 export const AuthServices = {
     async loginUser(
@@ -61,14 +61,28 @@ export const AuthServices = {
     };
 },
 
-async registerUser(login: string, password: string, email: string){
+async registerUser(dto: RegistrationDto){
+  const { login, email, password } = dto;
   const user = await userRepository.findByLoginOrEmail(login, email)
-  if (user)  return {
-        status: ResultStatus.BadRequest,
-        data: null,
-        errorMessage: 'Bad Request',
-        extensions: [{ field: 'login/email', message: 'User with this login exists' }],
-      }; 
+  
+  if (user) {
+    if (user.email === email) {
+        return {
+            status: ResultStatus.BadRequest,
+            data: null,
+            errorMessage: 'Bad Request',
+            extensions: [{ field: 'email', message: 'User with this email already exists' }],
+        };
+    }
+    if (user.login === login) {
+        return {
+            status: ResultStatus.BadRequest,
+            data: null,
+            errorMessage: 'Bad Request',
+            extensions: [{ field: 'login', message: 'User with this login already exists' }],
+        };
+    }
+}
   const passwordHash = await bcryptService.generateHash(password)
   
   const newUser: User = {
@@ -100,6 +114,76 @@ async registerUser(login: string, password: string, email: string){
       data: newUser,
       extensions: [],
     };
+},
+
+async confirmUser(code:string){
+  const user = await userServices.findByConfirmationCode(code)
+  if (!user) {
+    return {
+      status: ResultStatus.BadRequest,
+      data: null,
+      extensions: [{ field: 'code', message: 'Code is incorrect' }],
+    };
+  }
+if (user.emailConfirmation!.isConfirmed) {
+    return {
+      status: ResultStatus.BadRequest,
+      data: null,
+      extensions: [{ field: 'code', message: 'Email is already confirmed' }],
+    };
+  }
+  if (user.emailConfirmation!.expirationDate < new Date()) {
+    return {
+      status: ResultStatus.BadRequest,
+      data: null,
+      extensions: [{ field: 'code', message: 'Confirmation code is expired' }],
+    };
+  }
+
+  await userServices.activateUser(user._id.toString())
+  return {
+    status: ResultStatus.Success,
+    data: null,
+    extensions: [],
+  };
+},
+
+async emailResending(email:string){
+  const user = await userServices.findByEmail(email)
+  if (!user) {
+    return {
+      status: ResultStatus.BadRequest,
+      data: null,
+      extensions: [{ field: 'email', message: 'user not found' }],
+    };
+  }
+  if (user.emailConfirmation!.isConfirmed === true){
+     return {
+      status: ResultStatus.BadRequest,
+      data: null,
+      extensions: [{ field: 'email', message: 'User has been activated' }],
+    };
+  }
+  const newCode = randomUUID()
+  const newExpDate = add(new Date(), {
+        hours :1,
+        minutes:30,
+      })
+
+  await userServices.refreshCode(email, newCode, newExpDate)
+
+    nodemailerService
+  .sendEmail(
+    user.email,
+    newCode,
+    emailExamples.registrationEmail,
+  ).catch(er => console.error('error in send email:', er));
+ return {
+      status: ResultStatus.Success,
+      data: user,
+      extensions: [],
+    };
+      
 }
 
 }

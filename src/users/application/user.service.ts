@@ -7,6 +7,7 @@ import { WithId } from "mongodb";
 import { NotFoundException } from "../../core/exceptions/not-found.exception";
 
 
+
 export const userServices = {
 
     
@@ -53,5 +54,43 @@ export const userServices = {
             throw new NotFoundException('User not found')
         }
       return foundUser  
+    },
+
+    async findByEmail(email:string):Promise<WithId<User>|null>{
+      const foundUser = await userRepository.findByLoginOrEmail(email, email)
+      if (!foundUser){
+            throw new NotFoundException('User not found')
+        }
+      return foundUser  
+    },
+
+
+    async findByConfirmationCode(code:string){
+      const foundUser = await userRepository.findByConfirmationCode(code)
+      if (!foundUser){
+        throw new NotFoundException('User not found')
+      }
+      return foundUser
+    },
+
+    async activateUser(id:string):Promise<boolean>{
+      const isActivated = await userRepository.activateUser(id)
+      if (!isActivated){
+        throw new NotFoundException('User not found')
+      }
+      return isActivated
+    },
+
+    async refreshCode(email:string, code: string, expDate: Date):Promise<boolean>{
+
+      const isRefreshed = await userRepository.refreshCode(email, code, expDate)
+      if (!isRefreshed){
+        throw new NotFoundException('User not found')
+      }
+      return isRefreshed
     }
+ 
+
+
+    
 }
