@@ -11,7 +11,7 @@ export const userInputDtoValidation = [
         .isLength({ min: 6, max: 20 }).withMessage('Password must be from 6 to 20 characters'),
         
     body('email')
-        .isString().trim()
-        .isEmail().withMessage('Invalid email format')
-        .matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/)
+    .isString().withMessage('Email must be a string')
+    .trim()
+    .matches(/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/).withMessage('Invalid email format')
 ];

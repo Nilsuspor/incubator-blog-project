@@ -125,7 +125,7 @@ async confirmUser(code:string){
       extensions: [{ field: 'code', message: 'Code is incorrect' }],
     };
   }
-if (user.emailConfirmation!.isConfirmed) {
+if (user.emailConfirmation?.isConfirmed) {
     return {
       status: ResultStatus.BadRequest,
       data: null,

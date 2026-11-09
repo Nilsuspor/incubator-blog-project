@@ -1,6 +1,7 @@
 import { ObjectId, WithId} from "mongodb";
 import { User } from "../types/user";
 import { userCollection } from "../../db/collections";
+import { BadRequestException } from "../../core/exceptions/bad-request.exception";
 
 
 export const userRepository = {
@@ -39,7 +40,7 @@ export const userRepository = {
 
     async activateUser(id:string):Promise<boolean>{
         const updateResult = await userCollection.updateOne({_id: new ObjectId(id)},{ $set:{ 'emailConfirmation.isConfirmed': true}})
-        
+    
         return updateResult.modifiedCount>0
     },
 
