@@ -5,6 +5,7 @@ import { bcryptService } from "../../auth/adapters/bcrypt.service";
 import { BadRequestException } from "../../core/exceptions/bad-request.exception";
 import { WithId } from "mongodb";
 import { NotFoundException } from "../../core/exceptions/not-found.exception";
+import { randomUUID } from "node:crypto";
 
 
 
@@ -12,12 +13,10 @@ export const userServices = {
 
     
     async create(dto: UserInputDto):Promise<string>{
-        const existingUser = await userRepository.findByLoginOrEmail(dto.login, dto.email);
+        const existingUser = await this.findByLoginOrEmail(dto.login, dto.email);
         if (existingUser) {
       if (existingUser.email === dto.email) {
-        
         throw new BadRequestException([{ message: 'email should be unique', field: 'email' }])
-        
       }
       if (existingUser.login === dto.login) {
        throw new BadRequestException( [{ message: 'login should be unique', field: 'login' }])
@@ -32,20 +31,23 @@ export const userServices = {
       email,
       passwordHash,
       createdAt: new Date().toISOString(),
+      emailConfirmation: {
+        confirmationCode: randomUUID(),
+        expirationDate: new Date(),
+        isConfirmed: true
+      }
     };
-
         const newUserId = await userRepository.create(newUser);
-
         return newUserId
     },
     
+
     async delete(id:string):Promise<void>{
       const isDeleted =await userRepository.deleteById(id)
       if (!isDeleted) {
                  throw new NotFoundException('User not found');
              }
     },
-
 
 
     async findByid(id:string):Promise<WithId<User>|null>{
@@ -56,8 +58,15 @@ export const userServices = {
       return foundUser  
     },
 
+
     async findByEmail(email:string):Promise<WithId<User>|null>{
       const foundUser = await userRepository.findByLoginOrEmail(email, email)
+      return foundUser  
+    },
+
+
+      async findByLoginOrEmail(login:string,email:string):Promise<WithId<User>|null>{
+      const foundUser = await userRepository.findByLoginOrEmail(login, email)
       return foundUser  
     },
 
@@ -67,16 +76,15 @@ export const userServices = {
       return foundUser
     },
 
+
     async activateUser(id:string):Promise<boolean>{
       const isActivated = await userRepository.activateUser(id)
-      
       return isActivated
     },
 
-    async refreshCode(email:string, code: string, expDate: Date):Promise<boolean>{
 
+    async refreshCode(email:string, code: string, expDate: Date):Promise<boolean>{
       const isRefreshed = await userRepository.refreshCode(email, code, expDate)
-    
       return isRefreshed
     }
  

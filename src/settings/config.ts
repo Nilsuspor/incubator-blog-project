@@ -14,6 +14,8 @@ export const SETTINGS = {
 
   JWT_SECRET: env.JWT_SECRET as string,
   JWT_EXPIRES_IN: env.JWT_EXPIRES_IN || '10s',
+  JWT_REFRESH_SECRET: env.JWT_REFRESH_SECRET as string,
+  JWT_REFRESH_EXPIRES_IN: env.JWT_REFRESH_EXPIRES_IN || '20s',
 
   EMAIL: env.EMAIL as string,
   EMAIL_PASS: env.EMAIL_PASS as string

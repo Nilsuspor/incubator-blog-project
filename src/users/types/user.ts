@@ -4,7 +4,7 @@ export type User ={
     email: string;
     passwordHash: string;
     createdAt: string; 
-    emailConfirmation?:{
+    emailConfirmation:{
         confirmationCode: string,
         expirationDate: Date,
         isConfirmed: boolean

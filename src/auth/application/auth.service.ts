@@ -11,12 +11,13 @@ import { nodemailerService } from "../adapters/nodemailer.service";
 import { emailExamples } from "../adapters/emailExamples";
 import { RegistrationDto } from "../dto/registration.dto";
 import { userServices } from "../../users/application/user.service";
+import { authRepository } from "../repository/auth.repository";
 
 export const AuthServices = {
     async loginUser(
         loginOrEmail:string,
         password:string
-    ):Promise<Result<{accessToken:string}|null>>{
+    ):Promise<Result<{accessToken:string, refreshToken:string}|null>>{
         const result = await this.checkUserCredentials(loginOrEmail, password);
         if (result.status !== ResultStatus.Success)
             return {
@@ -27,14 +28,47 @@ export const AuthServices = {
       };
         
         const accessToken = await jwtServiсe.createToken(result.data!._id.toString());
+        const refreshToken = await jwtServiсe.createRefreshToken(result.data!._id.toString())
        return {
       status: ResultStatus.Success,
-      data: { accessToken },
+      data: { accessToken, refreshToken },
       extensions: [],
     };
 
     },
 
+
+    async refreshUserTokens(oldRefreshToken:string):Promise<Result<{accessToken:string, refreshToken:string}|null>>{
+      const payload = await jwtServiсe.verifyRefreshToken(oldRefreshToken)
+      if (!payload){
+        return{
+          status: ResultStatus.Unauthorized,
+          errorMessage: 'Unauthorized',
+          extensions: [{field: 'refreshToken', message: 'Token is invalid or expired'}],
+           data: null,
+        }
+      }
+
+      const inBlackList = await authRepository.isTokenInBlackList(oldRefreshToken)
+      if (inBlackList){
+        return{
+          status: ResultStatus.Unauthorized,
+          errorMessage: 'Unauthorized',
+          extensions: [{field: 'refreshToken', message: 'Token is invalid or expired'}],
+           data: null,
+        }
+      }
+      await authRepository.addToBlacklist(oldRefreshToken)
+      const userId = payload.userId;
+
+      const accessToken = await jwtServiсe.createToken(userId)
+      const refreshToken = await jwtServiсe.createRefreshToken(userId)
+      return {
+        status: ResultStatus.Success,
+        data: {accessToken, refreshToken},
+        extensions: [],
+      }
+    },
 
     async checkUserCredentials(loginOrEmail:string, password:string):Promise<Result<WithId<User> | null>>{
        const user = await userRepository.findByLoginOrEmail(loginOrEmail, loginOrEmail)
@@ -63,7 +97,7 @@ export const AuthServices = {
 
 async registerUser(dto: RegistrationDto){
   const { login, email, password } = dto;
-  const user = await userRepository.findByLoginOrEmail(login, email)
+  const user = await userServices.findByLoginOrEmail(login, email)
   
   if (user) {
     if (user.email === email) {
@@ -106,7 +140,7 @@ async registerUser(dto: RegistrationDto){
   nodemailerService
   .sendEmail(
     newUser.email,
-    newUser.emailConfirmation!.confirmationCode,
+    newUser.emailConfirmation.confirmationCode,
     emailExamples.registrationEmail,
   ).catch(er => console.error('error in send email:', er));
  return {
@@ -125,14 +159,14 @@ async confirmUser(code:string){
       extensions: [{ field: 'code', message: 'Code is incorrect' }],
     };
   }
-if (user.emailConfirmation?.isConfirmed) {
+if (user.emailConfirmation.isConfirmed) {
     return {
       status: ResultStatus.BadRequest,
       data: null,
       extensions: [{ field: 'code', message: 'Email is already confirmed' }],
     };
   }
-  if (user.emailConfirmation!.expirationDate < new Date()) {
+  if (user.emailConfirmation.expirationDate < new Date()) {
     return {
       status: ResultStatus.BadRequest,
       data: null,
@@ -157,7 +191,7 @@ async emailResending(email:string){
       extensions: [{ field: 'email', message: 'user not found' }],
     };
   }
-  if (user.emailConfirmation!.isConfirmed === true){
+  if (user.emailConfirmation.isConfirmed === true){
      return {
       status: ResultStatus.BadRequest,
       data: null,

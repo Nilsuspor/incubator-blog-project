@@ -13,10 +13,12 @@ import { AUTH_PATH } from "./auth/constant/auth.path";
 import { authRouter } from "./auth/router/auth.routers";
 import { COMMENT_PATH } from "./comments/constants/comment.path";
 import { commentRourter } from "./comments/routs/comment-routes";
+import cookieParser from 'cookie-parser';
 
 export const setupApp = (app: Express) => {
   app.use(express.json()); 
- 
+  app.use(cookieParser())
+
   app.get("/", (req: Request, res: Response) => {
     res.status(HttpStatus.Ok).send("Hello world!");
   });

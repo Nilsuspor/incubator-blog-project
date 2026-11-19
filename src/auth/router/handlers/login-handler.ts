@@ -18,6 +18,11 @@ export const loginHandler = async (req: RequestWithBody<LoginDto>,
      if (result.status !== ResultStatus.Success) {
       return res.status(resultCodeToHttpException(result.status)).send({errorsMessages:result.extensions});
     }
+    const { accessToken, refreshToken } = result.data!;
+    res.cookie('refreshToken', refreshToken, {
+        httpOnly: true,
+        secure: true,
+    });
 
-    return res.status(HttpStatus.Ok).send({ accessToken: result.data!.accessToken });
+    return res.status(HttpStatus.Ok).send({ accessToken });
 };
