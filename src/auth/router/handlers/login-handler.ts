@@ -15,10 +15,10 @@ export const loginHandler = async (req: RequestWithBody<LoginDto>,
     const result = await AuthServices.loginUser(loginOrEmail, password);
 
 
-     if (result.status !== ResultStatus.Success) {
+     if (result.status !== ResultStatus.Success|| !result.data) {
       return res.status(resultCodeToHttpException(result.status)).send({errorsMessages:result.extensions});
     }
-    const { accessToken, refreshToken } = result.data!;
+    const { accessToken, refreshToken } = result.data;
     res.cookie('refreshToken', refreshToken, {
         httpOnly: true,
         secure: true,

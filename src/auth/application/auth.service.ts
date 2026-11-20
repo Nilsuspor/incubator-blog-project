@@ -38,8 +38,8 @@ export const AuthServices = {
     },
 
 
-    async refreshUserTokens(oldRefreshToken:string):Promise<Result<{accessToken:string, refreshToken:string}|null>>{
-      const payload = await jwtServiсe.verifyRefreshToken(oldRefreshToken)
+    async refreshUserTokens(token:string):Promise<Result<{accessToken:string, refreshToken:string}|null>>{
+      const payload = await jwtServiсe.verifyRefreshToken(token)
       if (!payload){
         return{
           status: ResultStatus.Unauthorized,
@@ -48,8 +48,7 @@ export const AuthServices = {
            data: null,
         }
       }
-
-      const inBlackList = await authRepository.isTokenInBlackList(oldRefreshToken)
+      const inBlackList = await authRepository.isTokenInBlackList(token)
       if (inBlackList){
         return{
           status: ResultStatus.Unauthorized,
@@ -58,7 +57,7 @@ export const AuthServices = {
            data: null,
         }
       }
-      await authRepository.addToBlacklist(oldRefreshToken)
+      await authRepository.addToBlacklist(token)
       const userId = payload.userId;
 
       const accessToken = await jwtServiсe.createToken(userId)
@@ -218,6 +217,32 @@ async emailResending(email:string){
       extensions: [],
     };
       
-}
+}, 
 
+  async logOut(token:string):Promise<Result<null>>{
+      const payload = await jwtServiсe.verifyRefreshToken(token)
+      if (!payload){
+        return{
+          status: ResultStatus.Unauthorized,
+          errorMessage: 'Unauthorized',
+          extensions: [{field: 'refreshToken', message: 'Token is invalid or expired'}],
+           data: null,
+        }
+      }
+      const inBlackList = await authRepository.isTokenInBlackList(token)
+      if (inBlackList){
+        return{
+          status: ResultStatus.Unauthorized,
+          errorMessage: 'Unauthorized',
+          extensions: [{field: 'refreshToken', message: 'Token is invalid or expired'}],
+           data: null,
+        }
+      }
+      await authRepository.addToBlacklist(token)
+      return {
+  status: ResultStatus.Success,
+  data: null,
+  extensions: [],
+};
+  }
 }

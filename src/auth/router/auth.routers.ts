@@ -11,6 +11,8 @@ import { resendEmailHandler } from "./handlers/resend-email-handler";
 import { userInputDtoValidation } from "../../users/validation/user.input-dto.validation-middlewares";
 import { emailResendingValidation } from "../validation/email-validation-dto";
 import { codeValidation } from "../validation/code-dto-validation";
+import { refreshTokenHandler } from "./handlers/refresh-token-handler";
+import { logOutHandler } from "./handlers/log-out-handler";
 
 
 export const authRouter = Router({})
@@ -42,4 +44,12 @@ authRouter.post(AUTH_ROUTES.RESEND_EMAIL,
     emailResendingValidation,
     inputValidationResultMiddleware,
     resendEmailHandler
+)
+
+authRouter.post(AUTH_ROUTES.REFRESH_TOKEN,
+    refreshTokenHandler
+)
+
+authRouter.post(AUTH_ROUTES.LOGOUT,
+    logOutHandler
 )
