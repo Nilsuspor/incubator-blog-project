@@ -8,7 +8,7 @@ export const accessTokenGuard = async (req: Request, res: Response, next : NextF
     
     const [authType, token] = req.headers.authorization.split(' ')
 
-    if (authType !== 'Bearer') return res.sendStatus(HttpStatus.Unauthorized);
+   if (authType !== 'Bearer' || !token) return res.sendStatus(HttpStatus.Unauthorized);
 
     const payload = await jwtServiсe.verifyToken(token);
   if (payload) {
