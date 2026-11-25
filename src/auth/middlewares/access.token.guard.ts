@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { jwtServiсe } from '../adapters/jwt.service';
+import { jwtService } from '../adapters/jwt.service';
 import { IdType } from '../../core/types/id';
 import { HttpStatus } from '../../core/types/http-statuses';
 
@@ -10,7 +10,7 @@ export const accessTokenGuard = async (req: Request, res: Response, next : NextF
 
    if (authType !== 'Bearer' || !token) return res.sendStatus(HttpStatus.Unauthorized);
 
-    const payload = await jwtServiсe.verifyToken(token);
+    const payload = await jwtService.verifyToken(token);
   if (payload) {
     const { userId } = payload;
 

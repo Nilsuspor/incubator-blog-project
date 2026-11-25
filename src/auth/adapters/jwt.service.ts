@@ -3,7 +3,7 @@ import { SETTINGS } from "../../settings/config";
 
 
 
-export const jwtServiсe = {
+export const jwtService = {
     async createToken(userId: string):Promise<string>{
         return jwt.sign({userId}, SETTINGS.JWT_SECRET, {
             expiresIn: SETTINGS.JWT_EXPIRES_IN as SignOptions["expiresIn"]
@@ -34,14 +34,16 @@ export const jwtServiсe = {
         }
     },
 
-    async verifyRefreshToken(token:string):Promise<{userId:string}|null>{
-        try {
-            return jwt.verify(token, SETTINGS.JWT_REFRESH_SECRET) as {userId:string}
-        }catch (error){
-            console.error("Refresh token verify some error")
-            return null
-        }
-        
+async verifyRefreshToken(token: string): Promise<{ userId: string; exp: number } | null> {
+  try {
+    const payload = jwt.verify(token, SETTINGS.JWT_REFRESH_SECRET) as { userId: string; exp?: number };
+    if (!payload.userId || !payload.exp) return null;
+
+    return { userId: payload.userId, exp: payload.exp };
+  } catch (error) {
+    console.error("Refresh token verify some error");
+    return null;
+  }
 }
 
 }

@@ -1,3 +1,4 @@
 export type RevokedToken ={
-    token: string
+    token: string,
+    expiresAt: Date;
 }

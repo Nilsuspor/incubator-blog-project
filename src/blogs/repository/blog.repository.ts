@@ -6,9 +6,9 @@ import { ObjectId, WithId } from "mongodb";
 
 export const blogsRepository = {
      
-    async createBlog(newBlog : Blog): Promise<WithId<Blog>>{
+    async createBlog(newBlog : Blog): Promise<string>{
        const insertResult = await blogCollection.insertOne(newBlog)
-    return {...newBlog, _id:insertResult.insertedId}
+    return insertResult.insertedId.toString()
     },
 
      async updateBlog (id : string, blog: Omit<Blog, 'createdAt'|'isMembership'>):Promise<boolean>{

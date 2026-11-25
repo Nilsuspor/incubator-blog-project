@@ -1,6 +1,6 @@
 import { ForbiddenException } from "../../core/exceptions/forbidden-exeption";
 import { NotFoundException } from "../../core/exceptions/not-found.exception";
-import { PostServices } from "../../posts/application/post.servise";
+import { postRepository } from "../../posts/repository/post.repository";
 import { userServices } from "../../users/application/user.service";
 import { commentsRepository } from "../repository/comments.repository";
 import { mapCommentInputDtoToComment } from "../utils/mappers/map-comment-input-dto-tocomment.util";
@@ -12,7 +12,7 @@ export const commentsServices = {
         if (!currentUser){
             throw new NotFoundException('User not found')
         }
-        await PostServices.findById(postId)
+        await postRepository.finfByIdOrThrow(postId)
         
         const mappedtoBdModelComment = mapCommentInputDtoToComment(content, currentUser, postId)
         const createdCommentId = await commentsRepository.createComment(mappedtoBdModelComment)
@@ -33,10 +33,6 @@ export const commentsServices = {
 
     async deleteOne(commentId: string, userId: string): Promise<void> {
         const comment = await commentsRepository.findByIdOrFail(commentId);
-        console.log("=== СРАВНЕНИЕ ID ===");
-    console.log("ID В КОММЕНТЕ:", comment.commentatorInfo.userId, "ТИП:", typeof comment.commentatorInfo.userId);
-    console.log("ID ИЗ ТОКЕНА:", userId, "ТИП:", typeof userId);
-    console.log("ОНИ РАВНЫ?", comment.commentatorInfo.userId === userId);
     
         if (comment.commentatorInfo.userId !== userId) {
             throw new ForbiddenException('You can delete only your comments')

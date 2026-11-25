@@ -7,15 +7,15 @@ import { NotFoundException } from "../../core/exceptions/not-found.exception";
 
 export const BlogServices = {
 
-    async createBlog(blog: BlogInputDto): Promise<BlogViewModel>{
+    async createBlog(blog: BlogInputDto): Promise<string>{
          const newBlog = {
                     ...mapBlogInputDtoToBlog(blog),
                     createdAt: new Date().toISOString(),
                     isMembership: false
                 }
     
-            const createdBlog = await blogsRepository.createBlog(newBlog)
-        return mapToBlogViewModel(createdBlog) 
+            const createdBlogId = await blogsRepository.createBlog(newBlog)
+        return createdBlogId
         },
         
     async updateBlog(id:string, body: BlogInputDto): Promise<void>{

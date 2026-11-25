@@ -1,7 +1,6 @@
 import { ObjectId, WithId} from "mongodb";
 import { User } from "../types/user";
 import { userCollection } from "../../db/collections";
-import { BadRequestException } from "../../core/exceptions/bad-request.exception";
 
 
 export const userRepository = {
