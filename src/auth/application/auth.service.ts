@@ -12,24 +12,42 @@ import { emailExamples } from "../adapters/emailExamples";
 import { RegistrationDto } from "../dto/registration.dto";
 import { authRepository } from "../repository/auth.repository";
 import { createUserEntity } from "../../users/types/user.factory";
-
+import { sessionRepository } from "../../sessions/repository/session.repository";
 
 export const AuthServices = {
     async loginUser(
         loginOrEmail:string,
-        password:string
+        password:string,
+        ip: string,
+        title: string
     ):Promise<Result<{accessToken:string, refreshToken:string}|null>>{
         const result = await AuthServices.checkUserCredentials(loginOrEmail, password);
-        if (result.status !== ResultStatus.Success)
+        if (result.status !== ResultStatus.Success || !result.data)
             return {
             status: ResultStatus.Unauthorized,
             errorMessage: 'Unauthorized',
             extensions: [{ field: 'loginOrEmail', message: 'Wrong credentials' }],
             data: null,
       };
-        
-        const accessToken = await jwtService.createToken(result.data!._id.toString());
-        const refreshToken = await jwtService.createRefreshToken(result.data!._id.toString())
+        const userId = result.data._id.toString();
+        const deviceId = randomUUID();
+
+        const accessToken = await jwtService.createToken(userId);
+        const refreshToken = await jwtService.createRefreshToken(userId, deviceId);
+
+        const payload = jwtService.decodeRefreshToken(refreshToken);
+        if (!payload) {
+          throw new Error('Failed to decode newly created refresh token');
+  }
+
+  await sessionRepository.create({
+    userId,
+    deviceId,
+    ip,
+    title,
+    lastActiveDate: new Date(payload.iat * 1000).toISOString(),
+    expiresAt: new Date(payload.exp * 1000),
+  });
        return {
       status: ResultStatus.Success,
       data: { accessToken, refreshToken },
@@ -39,15 +57,11 @@ export const AuthServices = {
     },
 
 
-  async refreshUserTokens(
-  token: string
+async refreshUserTokens(
+  userId: string,
+  deviceId: string
 ): Promise<Result<{ accessToken: string; refreshToken: string } | null>> {
-  const revoked = await AuthServices.revokeRefreshToken(token);
-  if (revoked.status !== ResultStatus.Success || !revoked.data) {
-    return { ...revoked, data: null };
-  }
-
-  const user = await userRepository.findById(revoked.data.userId);
+  const user = await userRepository.findById(userId);
   if (!user) {
     return {
       status: ResultStatus.Unauthorized,
@@ -57,8 +71,19 @@ export const AuthServices = {
     };
   }
 
-  const accessToken = await jwtService.createToken(revoked.data.userId);
-  const refreshToken = await jwtService.createRefreshToken(revoked.data.userId);
+  const accessToken = await jwtService.createToken(userId);
+  const refreshToken = await jwtService.createRefreshToken(userId, deviceId);
+
+  const payload = jwtService.decodeRefreshToken(refreshToken);
+  if (!payload) {
+    throw new Error('Failed to decode newly created refresh token');
+  }
+
+  await sessionRepository.updateSession(
+    deviceId,
+    new Date(payload.iat * 1000).toISOString(),
+    new Date(payload.exp * 1000)
+  );
 
   return {
     status: ResultStatus.Success,
@@ -66,7 +91,6 @@ export const AuthServices = {
     extensions: [],
   };
 },
-
     async checkUserCredentials(loginOrEmail:string, password:string):Promise<Result<WithId<User> | null>>{
        const user = await userRepository.findByLoginOrEmail(loginOrEmail, loginOrEmail)
         if (!user) 
@@ -201,11 +225,8 @@ async emailResending(email:string): Promise<Result<null>>{
       
 }, 
 
-  async logOut(token: string): Promise<Result<null>> {
-  const revoked = await AuthServices.revokeRefreshToken(token);
-  if (revoked.status !== ResultStatus.Success) {
-    return { ...revoked, data: null };
-  }
+async logOut(userId: string, deviceId: string): Promise<Result<null>> {
+  await sessionRepository.deleteByDeviceId(deviceId, userId);
 
   return {
     status: ResultStatus.Success,
@@ -214,34 +235,4 @@ async emailResending(email:string): Promise<Result<null>>{
   };
 },
 
-  async revokeRefreshToken(token: string): Promise<Result<{ userId: string } | null>> {
-  const payload = await jwtService.verifyRefreshToken(token);
-  if (!payload) {
-    return {
-      status: ResultStatus.Unauthorized,
-      errorMessage: 'Unauthorized',
-      extensions: [{ field: 'refreshToken', message: 'Token is invalid or expired' }],
-      data: null,
-    };
-  }
-
-  const inBlackList = await authRepository.isTokenInBlackList(token);
-  if (inBlackList) {
-    return {
-      status: ResultStatus.Unauthorized,
-      errorMessage: 'Unauthorized',
-      extensions: [{ field: 'refreshToken', message: 'Token is invalid or expired' }],
-      data: null,
-    };
-  }
-
-  const expiresAt = new Date(payload.exp * 1000);
-  await authRepository.addToBlacklist(token, expiresAt);
-
-  return {
-    status: ResultStatus.Success,
-    data: { userId: payload.userId },
-    extensions: [],
-  };
-},
 }

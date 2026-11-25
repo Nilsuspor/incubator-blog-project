@@ -1,6 +1,6 @@
 import jwt, { SignOptions } from "jsonwebtoken";
 import { SETTINGS } from "../../settings/config";
-
+import { RefreshTokenPayload } from "../types/refreshTokenPayload";
 
 
 export const jwtService = {
@@ -10,11 +10,11 @@ export const jwtService = {
         })
     },
 
-    async createRefreshToken(userId:string):Promise<string>{
-        return jwt.sign({userId}, SETTINGS.JWT_REFRESH_SECRET, {
-             expiresIn: SETTINGS.JWT_REFRESH_EXPIRES_IN as SignOptions["expiresIn"]
-        })
-    },
+ async createRefreshToken(userId: string, deviceId: string): Promise<string> {
+  return jwt.sign({ userId, deviceId }, SETTINGS.JWT_REFRESH_SECRET, {
+    expiresIn: SETTINGS.JWT_REFRESH_EXPIRES_IN as SignOptions['expiresIn'],
+  });
+},
 
     async decodeToken(token: string):Promise<any>{
         try{
@@ -34,16 +34,39 @@ export const jwtService = {
         }
     },
 
-async verifyRefreshToken(token: string): Promise<{ userId: string; exp: number } | null> {
+async verifyRefreshToken(token: string): Promise<RefreshTokenPayload | null> {
   try {
-    const payload = jwt.verify(token, SETTINGS.JWT_REFRESH_SECRET) as { userId: string; exp?: number };
-    if (!payload.userId || !payload.exp) return null;
+    const payload = jwt.verify(
+      token,
+      SETTINGS.JWT_REFRESH_SECRET
+    ) as Partial<RefreshTokenPayload>;
 
-    return { userId: payload.userId, exp: payload.exp };
+    if (!payload.userId || !payload.deviceId || !payload.iat || !payload.exp) {
+      return null;
+    }
+
+    return {
+      userId: payload.userId,
+      deviceId: payload.deviceId,
+      iat: payload.iat,
+      exp: payload.exp,
+    };
   } catch (error) {
-    console.error("Refresh token verify some error");
     return null;
   }
-}
+},
 
+decodeRefreshToken(token: string): RefreshTokenPayload | null {
+  const payload = jwt.decode(token) as Partial<RefreshTokenPayload> | null;
+  if (!payload?.userId || !payload?.deviceId || !payload?.iat || !payload?.exp) {
+    return null;
+  }
+
+  return {
+    userId: payload.userId,
+    deviceId: payload.deviceId,
+    iat: payload.iat,
+    exp: payload.exp,
+  };
+},
 }

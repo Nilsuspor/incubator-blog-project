@@ -6,17 +6,26 @@ import { resultCodeToHttpException } from "../../../core/result/resulstCodeToHtt
 
 
 export const logOutHandler = async (req: Request, res: Response) => {
-    const oldToken = req.cookies?.refreshToken;
-    if (!oldToken){
-        res.sendStatus(HttpStatus.Unauthorized)
-        return
-    }
+    const userId = req.user?.id;
+  const deviceId = req.deviceId;
 
-    const result = await AuthServices.logOut(oldToken)
+  if (!userId || !deviceId) {
+    res.sendStatus(HttpStatus.Unauthorized);
+    return;
+  }
 
-    if (result.status !== ResultStatus.Success){
-      return res.status(resultCodeToHttpException(result.status)).send({errorsMessages:result.extensions});      
-    }
-    res.clearCookie('refreshToken')
-    return res.sendStatus(HttpStatus.NoContent)
+  const result = await AuthServices.logOut(userId, deviceId);
+
+  if (result.status !== ResultStatus.Success) {
+    res
+      .status(resultCodeToHttpException(result.status))
+      .send({ errorsMessages: result.extensions });
+    return;
+  }
+
+  res.clearCookie('refreshToken', {
+    httpOnly: true,
+    secure: true,
+  });
+  res.sendStatus(HttpStatus.NoContent);
 }

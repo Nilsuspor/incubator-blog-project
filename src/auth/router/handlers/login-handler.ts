@@ -12,8 +12,17 @@ export const loginHandler = async (req: RequestWithBody<LoginDto>,
     res: Response<LoginSuccessViewModel| ValidationErrorDto>) => {
     const { loginOrEmail, password } = req.body;
 
-    const result = await AuthServices.loginUser(loginOrEmail, password);
-
+    
+    const ip = req.ip || 'unknown';
+    const title = req.headers['user-agent'] || 'Unknown device';    
+    const result = await AuthServices.loginUser(
+  req.body.loginOrEmail,
+  req.body.password,
+  ip,
+  title
+);
+    
+    
 
      if (result.status !== ResultStatus.Success|| !result.data) {
       return res.status(resultCodeToHttpException(result.status)).send({errorsMessages:result.extensions});

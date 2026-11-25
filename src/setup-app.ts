@@ -18,7 +18,7 @@ import cookieParser from 'cookie-parser';
 export const setupApp = (app: Express) => {
   app.use(express.json()); 
   app.use(cookieParser())
-
+  app.set('trust proxy', true)
   app.get("/", (req: Request, res: Response) => {
     res.status(HttpStatus.Ok).send("Hello world!");
   });

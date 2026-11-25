@@ -5,24 +5,29 @@ import { ResultStatus } from "../../../core/result/resultCode";
 import { resultCodeToHttpException } from "../../../core/result/resulstCodeToHttpException";
 
 export const refreshTokenHandler = async (req: Request, res: Response) => {
-    const oldToken = req.cookies?.refreshToken;
-    if (!oldToken){
-        res.sendStatus(HttpStatus.Unauthorized)
-        return
-    }
+   const userId = req.user?.id;
+  const deviceId = req.deviceId;
 
-    const result = await AuthServices.refreshUserTokens(oldToken)
+  if (!userId || !deviceId) {
+    res.sendStatus(HttpStatus.Unauthorized);
+    return;
+  }
 
-    if (result.status !== ResultStatus.Success|| !result.data){
-      return res.status(resultCodeToHttpException(result.status)).send({errorsMessages:result.extensions});      
-    }
+  const result = await AuthServices.refreshUserTokens(userId, deviceId);
 
-    const { accessToken, refreshToken } = result.data!;
+  if (result.status !== ResultStatus.Success || !result.data) {
+    res
+      .status(resultCodeToHttpException(result.status))
+      .send({ errorsMessages: result.extensions });
+    return;
+  }
 
-    res.cookie('refreshToken', refreshToken, {
-        httpOnly: true,
-        secure: true,
-    });
+  const { accessToken, refreshToken } = result.data;
 
-    return res.status(HttpStatus.Ok).send({ accessToken });
+  res.cookie('refreshToken', refreshToken, {
+    httpOnly: true,
+    secure: true,
+  });
+
+  res.status(HttpStatus.Ok).send({ accessToken });
 }

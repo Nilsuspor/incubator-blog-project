@@ -13,7 +13,7 @@ import { emailResendingValidation } from "../validation/email-validation-dto";
 import { codeValidation } from "../validation/code-dto-validation";
 import { refreshTokenHandler } from "./handlers/refresh-token-handler";
 import { logOutHandler } from "./handlers/log-out-handler";
-
+import { refreshTokenGuard } from "../middlewares/refresh-token.guard.middleware";
 
 export const authRouter = Router({})
 
@@ -47,9 +47,11 @@ authRouter.post(AUTH_ROUTES.RESEND_EMAIL,
 )
 
 authRouter.post(AUTH_ROUTES.REFRESH_TOKEN,
+    refreshTokenGuard,
     refreshTokenHandler
 )
 
 authRouter.post(AUTH_ROUTES.LOGOUT,
+    refreshTokenGuard,
     logOutHandler
 )
