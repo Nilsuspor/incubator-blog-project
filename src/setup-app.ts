@@ -14,6 +14,8 @@ import { authRouter } from "./auth/router/auth.routers";
 import { COMMENT_PATH } from "./comments/constants/comment.path";
 import { commentRourter } from "./comments/routs/comment-routes";
 import cookieParser from 'cookie-parser';
+import { SECURITY_PATH } from "./sessions/constants/security.path";
+import { sessionsRouter } from "./sessions/routes/sessions-router";
 
 export const setupApp = (app: Express) => {
   app.use(express.json()); 
@@ -27,6 +29,7 @@ export const setupApp = (app: Express) => {
   app.use(USERS_PATH, userRouter)
   app.use(AUTH_PATH,authRouter)
   app.use(COMMENT_PATH, commentRourter)
+  app.use(SECURITY_PATH, sessionsRouter)
   app.use (TESTING_PATH,testDelRouter)
 
   return app;

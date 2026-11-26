@@ -1,6 +1,6 @@
 import { Db, MongoClient } from 'mongodb';
 import { SETTINGS } from '../settings/config';
-import { initCollections, revokedTokensCollection } from './collections';
+import { initCollections} from './collections';
  
 export let client: MongoClient;
  
@@ -14,11 +14,6 @@ export async function runDB(url: string): Promise<void> {
   try {
     await client.connect();
     await db.command({ ping: 1 });
-
-    await revokedTokensCollection.createIndex(
-      { expiresAt: 1 },
-      { expireAfterSeconds: 0 }
-    );
 
     console.log('✅ Connected to the database');
   } catch (e) {

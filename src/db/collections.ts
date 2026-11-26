@@ -12,8 +12,7 @@ export const BLOG_COLLECTION_NAME = 'blogs';
  export const COMMENT_COLLECTION_NAME = 'comment'
  export const SESSIONS_COLLECTION_NAME = 'sessions'
  
- 
- export const REVOKED_TOKENS_COLLECTION_NAME = 'revokedTokens'
+
 // Коллекция инициализируется один раз в initCollections() после подключения к БД.
 // До этого момента она undefined, поэтому обращаться к ней можно только после runDB().
 export let blogCollection: Collection<Blog>;
@@ -22,8 +21,6 @@ export let userCollection: Collection<User>;
 export let commentCollection: Collection<Comment>;
 export let sessionsCollection: Collection<SessionDb>
 
-export let revokedTokensCollection: Collection<RevokedToken>
-
 // Создаём объект коллекции из подключённой базы.
 export function initCollections(db: Db): void {
   blogCollection = db.collection<Blog>(BLOG_COLLECTION_NAME);
@@ -31,5 +28,4 @@ export function initCollections(db: Db): void {
   userCollection = db.collection<User>(USER_COLLECTION_NAME);
   commentCollection = db.collection<Comment>(COMMENT_COLLECTION_NAME)
   sessionsCollection = db.collection<SessionDb>(SESSIONS_COLLECTION_NAME)
-  revokedTokensCollection = db.collection<RevokedToken>(REVOKED_TOKENS_COLLECTION_NAME)
 } 

@@ -10,7 +10,6 @@ import { add } from "date-fns";
 import { nodemailerService } from "../adapters/nodemailer.service";
 import { emailExamples } from "../adapters/emailExamples";
 import { RegistrationDto } from "../dto/registration.dto";
-import { authRepository } from "../repository/auth.repository";
 import { createUserEntity } from "../../users/types/user.factory";
 import { sessionRepository } from "../../sessions/repository/session.repository";
 
