@@ -29,4 +29,14 @@ export const sessionRepository = {
     const result = await sessionsCollection.deleteOne({ deviceId, userId });
     return result.deletedCount === 1;
   },
+
+async deleteOtherSessions(
+    userId: string,
+    deviceId: string
+): Promise<void> {
+    await sessionsCollection.deleteMany({
+        userId: userId,
+        deviceId: { $ne: deviceId } 
+    });
+},
 }
