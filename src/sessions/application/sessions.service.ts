@@ -13,6 +13,35 @@ export const sessionServices = {
          data: null,
          extensions: [],
        };   
-    }
+    },
+
+
+    async deleteSessionByDeviceId(userId: string, deviceId: string): Promise<Result<null>> {
+  const foundSession = await sessionRepository.findByDeviceId(deviceId);
+
+  if (!foundSession) {
+    return {
+      status: ResultStatus.NotFound,
+      data: null,
+      extensions: [],
+    };
+  }
+
+  if (foundSession.userId !== userId) {
+    return {
+      status: ResultStatus.Forbidden,
+      data: null,
+      extensions: [],
+    };
+  }
+
+  await sessionRepository.deleteByDeviceId(deviceId, userId);
+
+  return {
+    status: ResultStatus.Success,
+    data: null,
+    extensions: [],
+  };
+}
 
 }
